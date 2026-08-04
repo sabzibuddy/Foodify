@@ -1,0 +1,442 @@
+/* ============================================================
+   PRODUCTS — SabziBuddy
+   Merged: grid layout + product card + all badges
+   ============================================================ */
+
+
+/* ════════════════════════════════════════
+   1. PRODUCTS GRID
+════════════════════════════════════════ */
+
+.products {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  padding: 4px 14px 24px;
+}
+
+/* ── LOADING STATE ───────────────────────────────────────── */
+.products-loading {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--tmut);
+}
+
+/* ── EMPTY / NO RESULTS ──────────────────────────────────── */
+.products-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--tmut);
+}
+.products-empty-icon { font-size: 48px; margin-bottom: 12px; }
+.products-empty-text { font-size: 15px; font-weight: 600; color: var(--tm); margin-bottom: 6px; }
+.products-empty-sub  { font-size: 13px; color: var(--tmut); }
+
+
+/* ════════════════════════════════════════
+   2. PRODUCT CARD
+════════════════════════════════════════ */
+
+/* ── CARD WRAPPER ────────────────────────────────────────── */
+.card {
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  transition: box-shadow var(--t-base) var(--ease),
+              transform   var(--t-base) var(--ease);
+  position: relative;
+}
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* ── CARD IMAGE ──────────────────────────────────────────── */
+/*.card-img {
+  position: relative;
+  width: 100%;
+  padding-top: 75%;     
+  background: #f5f5f0;
+  overflow: hidden;
+  border-radius: var(--r-md) var(--r-md) 0 0;
+}  */
+
+/* ── Card Image (wide, food-listing style) ── */
+.card-img {
+  position: relative;
+  width: 100%;
+  padding-top: 62%;
+  background: #f5f5f0;
+  overflow: hidden;
+  border-radius: 20px 20px 0 0;
+}
+
+
+.sabzi-img {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s var(--ease);
+}
+@media (hover: hover) {
+  .card:hover .sabzi-img { transform: scale(1.04); }
+}
+
+/* Emoji / text fallback when no image */
+.sabzi-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 4px;
+  background: var(--cream2);
+  color: var(--tmut); font-size: 12px;
+}
+
+/* ── IMAGE CAPTION BADGE (top-left of image, Zomato-style) ── */
+.card-img-strip {
+  position: absolute; top: 10px; left: 10px; z-index: 2;
+  display: inline-flex; align-items: center; gap: 5px;
+  max-width: calc(100% - 56px);
+  padding: 3px 7px;
+  background: rgba(0,0,0,0.62);
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+  font-size: 12px; font-weight: 600; color: #fff;
+}
+.cis-veg {
+  width: 12px; height: 12px; flex-shrink: 0;
+}
+.cis-veg-box { fill: #FEFEFE; stroke: #008001; stroke-width: 85; }
+.cis-veg-dot { fill: #008001; stroke: #008001; stroke-width: 85; }
+.cis-name {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  max-width: 140px;
+}
+.cis-sep { opacity: 0.7; }
+.cis-price { font-weight: 800; }
+.cis-mrp { opacity: 0.75; text-decoration: line-through; font-weight: 500; font-size: 11px; }
+
+/* ── CARD BODY ───────────────────────────────────────────── */
+.card-body {
+  padding: 12px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-head-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  position: relative;
+}
+
+.card-name {
+  font-weight: 700; font-size: 17px; color: #111;
+  overflow: hidden; text-overflow: ellipsis;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  line-height: 1.25;
+  padding-right: 62px;
+}
+
+.card-weight { font-size: 12px; color: var(--tmut); }
+
+.card-stock { font-size: 11px; font-weight: 600; }
+.card-stock.ok  { color: #16a34a; }
+.card-stock.low { color: var(--terra); }
+
+/* Inline off badge next to price */
+.price-off-inline {
+  font-size: 11px; font-weight: 600; color: #16a34a;
+}
+
+/* ── RATING BADGE + "By X" wrapper (top-right of title) ──── */
+.card-rating-col {
+  position: absolute;
+  top: 0;
+  right: 0;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+/* Legacy badge classes retired — see css/rating-badge.css for the
+   premium animated replacement (.rt-badge). .card-rating-col /
+   .card-rating-sub below are untouched since layout still depends on them. */
+.card-rating-sub {
+  font-size: 11px; color: var(--tmut);
+  font-weight: 600;
+}
+
+/* ── META ROW (weight / stock, with bolt icon) ───────────── */
+.card-meta-row {
+  display: none; align-items: center; gap: 5px;
+  font-size: 12.5px; font-weight: 600; color: var(--g3);
+  margin-top: 4px;
+}
+.meta-bolt { width: 13px; height: 13px; fill: var(--g4); flex-shrink: 0; }
+
+/* ── FAST/ETA ROW (Near & Fast + wait-clock time) ────────── */
+.card-fast-row {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600;
+  margin-top: 4px;
+}
+.cfr-item { display: inline-flex; align-items: center; gap: 4px; color: #16A34A; }
+.cfr-bolt { width: 13px; height: 13px; fill: #16A34A; flex-shrink: 0; }
+.cfr-clock { width: 13px; height: 13px; fill: #6B7280; flex-shrink: 0; }
+.cfr-eta { color: #6B7280; font-weight: 600; }
+.cfr-sep { color: var(--tmut); }
+
+/* ── OFFER ROW (tag icon + off text) ─────────────────────── */
+.card-offer-row {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 600; color: #6B7280;
+  margin-top: 2px;
+}
+.cor-icon-svg { width: 13px; height: 13px; flex-shrink: 0; fill: #2563EB; }
+
+/* ── TAG PILL ROW (bottom, muted pill like "Pure Veg") ───── */
+.card-tags-row {
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--cream2);
+}
+.card-tag-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--cream2); color: var(--tm);
+  font-size: 11px; font-weight: 600;
+  padding: 4px 10px; border-radius: 20px;
+}
+.ctp-icon { width: 13px; height: 13px; flex-shrink: 0; fill: #16A34A; }
+
+
+/* ════════════════════════════════════════
+   3. BADGES
+════════════════════════════════════════ */
+
+/* ── DYNAMIC TAG PILL — "new" variant (gold) ─────────────── */
+.card-tag-pill.new-badge { background: #FFD700; color: #333; }
+
+/* ── STOCK WARNING BADGE (top-right) ─────────────────────── */
+.stock-badge {
+  position: absolute; top: 8px; right: 8px; z-index: 2;
+  background: rgba(220,38,38,0.9); color: #fff;
+  font-size: 9px; font-weight: 700; padding: 2px 6px;
+  border-radius: 5px; pointer-events: none;
+}
+.stock-badge.low { background: rgba(217,119,6,0.9); }
+
+/* ── SOLD OUT LABEL ──────────────────────────────────────── */
+.sold-out-label {
+  position: absolute; top: 8px; left: 8px; z-index: 3;
+  background: rgba(30,30,30,0.72); color: #fff;
+  font-size: 10px; font-weight: 700; padding: 3px 8px;
+  border-radius: 6px; pointer-events: none;
+}
+
+/* ── PRICE BADGE (green pill on card) ────────────────────── */
+.price-badge {
+  background: var(--green-price); color: #fff;
+  font-size: 16px; font-weight: 700; padding: 4px 10px;
+  border-radius: 7px; display: inline-flex; align-items: center; line-height: 1;
+}
+.price-mrp { font-size: 13px; color: var(--tmut); text-decoration: line-through; }
+.price-off  { font-size: 12px; font-weight: 600; color: var(--green-price); margin-bottom: 5px; }
+
+/* ── PD PAGE BADGES ──────────────────────────────────────── */
+.pd-badge-fresh {
+  position: absolute; top: 12px; left: 12px; z-index: 2;
+  background: var(--green-price); color: #fff;
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 13px; font-weight: 700; font-family: 'Outfit', sans-serif; pointer-events: none;
+}
+.pd-badge-disc {
+  position: absolute; top: 12px; right: 12px; z-index: 2;
+  background: #FF6B35; color: #fff;
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 13px; font-weight: 700; font-family: 'Outfit', sans-serif; pointer-events: none;
+}
+.pd-sim-disc {
+  position: absolute; top: 6px; right: 6px; z-index: 2;
+  background: #FF6B35; color: #fff;
+  padding: 2px 8px; border-radius: 12px;
+  font-size: 10px; font-weight: 700; font-family: 'Outfit', sans-serif; pointer-events: none;
+}
+
+/* ── CART VIEW BADGE (PD page) ───────────────────────────── */
+.pd-vc-badge {
+  background: var(--green-price); color: #fff;
+  font-size: 11px; font-weight: 800;
+  width: 20px; height: 20px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Outfit', sans-serif;
+}
+
+/* ── WISHLIST (BOOKMARK) BUTTON ──────────────────────────── */
+.wish-btn {
+  position: absolute;
+  top: 5px;
+  right: 12px;
+  z-index: 3;
+  width: 29px;
+  height: 29px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+  transition: transform var(--t-fast) var(--ease);
+}
+.wish-btn:hover      { transform: scale(1.12); }
+.wish-btn.wishlisted { color: #E8335A; }
+
+/* Shared bookmark icon — used by .wish-btn (products.js) and
+   .hs-wish-btn (home-sections.js / buy-again.js). Outline while
+   unsaved, solid fill once wishlisted; only fill is ever toggled,
+   so this never needs re-rendering, just the .wished class. */
+.bookmark-icon {
+  width: 25px; height: 25px;
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 0.13;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: fill 0.15s ease;
+}
+.wish-btn.wished .bookmark-icon,
+.hs-wish-btn.wished .bookmark-icon {
+  fill: #e95322;
+}
+
+/* ── CTRL WRAP (add btn container in card-body) ──────────── */
+.card-ctrl-wrap {
+  margin-top: 8px;
+}
+
+/* ── ADD TO CART (+ Add) BUTTON ──────────────────────────── */
+.card-add-btn {
+  width: 100%;
+  background: transparent;
+  border: 1.5px solid var(--g2);
+  color: var(--g2);
+  border-radius: 10px;
+  padding: 9px 0;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: 0.3px;
+}
+.card-add-btn:hover  { background: var(--g2); color: #fff; }
+.card-add-btn:active { background: var(--g3); color: #fff; transform: scale(0.97); }
+
+.card-notify-btn {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+.card-notify-btn:hover  { background: #f59e0b; color: #fff; }
+.card-notify-btn.notified { background: #f59e0b; color: #fff; opacity: 0.8; }
+
+/* ── QTY CTRL (− qty +) ──────────────────────────────────── */
+.card-qty-ctrl {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--g2);
+  border-radius: 8px;
+  padding: 3px 6px;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.card-qty-btn {
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  line-height: 1;
+}
+.card-qty-btn:active { background: rgba(255,255,255,0.18); border-radius: 6px; }
+
+.card-qty-num {
+  flex: 1;
+  color: #fff;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ── WISHLIST ACTION BAR (Sticky) ────────── */
+.wish-action-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--cream2);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.wish-count-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--td);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.wish-in-cart-note {
+  font-size: 11px;
+  color: var(--g2);
+  font-weight: 500;
+  background: #e8f5e9;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+.wish-move-all-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--g2);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 9px 16px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  white-space: nowrap;
+}
+.wish-move-all-btn:active { transform: scale(0.96); }
+.wish-move-all-btn.all-in-cart { background: #9ca3af; cursor: default; }
+.wish-move-all-btn:disabled { opacity: 0.7; }

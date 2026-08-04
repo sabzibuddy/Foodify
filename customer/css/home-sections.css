@@ -1,0 +1,572 @@
+/* ═══════════════════════════════════════════════════════════════════
+   home-sections.css  —  SabziBuddy Home Page Sections
+   Includes: 1₹ Zone (with timer), Flash Deals, Category Rows
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Container toggle ──────────────────────────────────────────── */
+#home-sections          { display: none; }
+#home-sections.active   { display: block; }
+
+/* When home-sections active, hide the normal product grid */
+#home-sections.all-mode ~ #products { display: none !important; }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   1₹ ZONE SECTION
+   ══════════════════════════════════════════════════════════════════ */
+.hs-zone-section {
+  background: linear-gradient(135deg, #e84c1e 0%, #f06030 60%, #e84c1e 100%);
+  padding: 14px 0 18px 0;
+  margin: 0 12px 12px 12px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(232, 76, 30, 0.3);
+}
+
+.hs-zone-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px 3px 14px;
+}
+
+.hs-zone-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hs-zone-fire {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.hs-zone-label {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.3px;
+}
+
+/* Timer pill — top right */
+.hs-zone-timer {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(0, 0, 0, 0.28);
+  padding: 6px 11px;
+  border-radius: 20px;
+}
+
+.hs-zone-ends-lbl {
+  color: rgba(255,255,255,0.85);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+#hs-zone-countdown {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 1.5px;
+  min-width: 62px;
+  text-align: center;
+}
+
+.hs-zone-subtitle {
+  color: rgba(255,255,255,0.78);
+  font-size: 12px;
+  padding: 0 14px 10px 14px;
+  margin: 0;
+}
+
+/* Zone scroll row — cards inside stay white */
+.hs-zone-section .hs-scroll-row { padding: 0 14px 4px 14px; }
+.hs-zone-section .hs-card       { background: #fff; border-color: rgba(255,255,255,0.5); }
+
+/* Zone timer pill — fd-timer-pill ka override orange bg ke liye */
+.hs-zone-pill { background: rgba(0,0,0,0.28) !important; backdrop-filter: none; }
+.hs-zone-pill .fd-timer-label { color: rgba(255,255,255,0.85); }
+.hs-zone-pill .fd-timer-count { color: #fff; }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   GENERIC HORIZONTAL SECTION  (Flash Deals, Veggie, Fruit …)
+   ══════════════════════════════════════════════════════════════════ */
+.hs-section {
+  background: #fff;
+  padding: 14px 0 10px 0;
+  margin-bottom: 8px;
+  border-bottom: 6px solid #f4f4f4;
+}
+
+.hs-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px 10px 14px;
+}
+
+.hs-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--g1, #0C1F12);
+}
+
+.hs-view-all-btn {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--g4, #4A8B5C);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 0;
+  white-space: nowrap;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   SCROLL ROW
+   ══════════════════════════════════════════════════════════════════ */
+.hs-scroll-row {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-x: visible;
+  padding: 4px 14px 4px 14px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.hs-scroll-row::-webkit-scrollbar { display: none; }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   PRODUCT CARD
+   ══════════════════════════════════════════════════════════════════ */
+.hs-card {
+  flex: none;
+  width: 100%;
+  background: #fff;
+  border: none;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  transition: transform 0.13s ease;
+}
+.hs-card:active { transform: scale(0.98); }
+
+/* Discount badge — top left */
+.hs-disc-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #E23744;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 7px;
+  z-index: 2;
+  letter-spacing: 0.4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+}
+
+/* Wishlist bookmark — top right (icon styling shared via .bookmark-icon in products.css) */
+.hs-wish-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  padding: 0;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+  transition: transform 0.15s;
+}
+.hs-wish-btn:active  { transform: scale(0.88); }
+
+/* Image — wide/landscape, fills the frame like the reference listing */
+.hs-card-img-wrap {
+  width: 100%;
+  aspect-ratio: unset;
+  padding-top: 62%;
+  position: relative;
+  background: #f7f7f7;
+  overflow: hidden;
+}
+
+.hs-card-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Info block */
+.hs-card-info {
+  padding: 12px 14px 14px 14px;
+}
+
+.hs-card-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 3px 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.hs-card-weight {
+  font-size: 12px;
+  color: #999;
+  margin: 0 0 7px 0;
+}
+
+.hs-card-price-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.hs-card-price {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--g4, #4A8B5C);
+}
+
+.hs-card-mrp {
+  font-size: 12px;
+  color: #bbb;
+  text-decoration: line-through;
+}
+
+/* ─── Add button ─────────────────────────── */
+.hs-add-btn {
+  width: 100%;
+  background: transparent;
+  border: 1.5px solid var(--g4, #4A8B5C);
+  color: var(--g4, #4A8B5C);
+  border-radius: 10px;
+  padding: 9px 0;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  font-family: inherit;
+}
+.hs-add-btn:active {
+  background: var(--g4, #4A8B5C);
+  color: #fff;
+}
+
+/* ─── Qty controls ───────────────────────── */
+.hs-qty-ctrl {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--g4, #4A8B5C);
+  border-radius: 8px;
+  padding: 4px 6px;
+}
+
+.hs-qty-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0 3px;
+  line-height: 1;
+  font-family: inherit;
+}
+
+.hs-qty-num {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  min-width: 16px;
+  text-align: center;
+}
+
+/* ─── Out of stock overlay ───────────────── */
+.hs-card.hs-oos .hs-card-img-wrap { opacity: 0.45; }
+.hs-oos-badge {
+  position: absolute;
+  bottom: 46px;
+  left: 8px; right: 8px;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+  padding: 3px 6px;
+  border-radius: 5px;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   EMPTY STATE
+   ══════════════════════════════════════════════════════════════════ */
+.hs-empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: #aaa;
+  font-size: 14px;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   FLASH DEALS — section title with lightning icon
+   ══════════════════════════════════════════════════════════════════ */
+.hs-flash-title::before {
+  content: '⚡';
+  margin-right: 4px;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   RESPONSIVE — slightly smaller cards on very narrow screens
+   ══════════════════════════════════════════════════════════════════ */
+@media (max-width: 360px) {
+  .hs-zone-label { font-size: 19px; }
+  #hs-zone-countdown { font-size: 13px; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   FLASH DEAL SECTION
+════════════════════════════════════════════════════════════ */
+#flash-deal-section {
+  margin: 12px 0 0;
+}
+
+.fd-section-wrap {
+  background: linear-gradient(135deg, #E91E8C 0%, #FF5252 50%, #FF7043 100%);
+  border-radius: 16px;
+  margin: 0 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(233, 30, 140, 0.3);
+}
+
+/* ── Header ── */
+.fd-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.fd-section-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fd-section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.3px;
+}
+
+.fd-section-sub {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.75);
+}
+
+.fd-header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+/* ── Timer Pill ── */
+.fd-timer-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(0,0,0,0.25);
+  border-radius: 20px;
+  padding: 5px 12px;
+  backdrop-filter: blur(6px);
+}
+
+.fd-timer-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4fffb0;
+  animation: pulse 1.4s infinite;
+  flex-shrink: 0;
+}
+
+.fd-timer-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+}
+
+.fd-timer-count {
+  font-family: 'Space Mono', monospace, 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+/* ── Text Badge ── */
+.fd-text-badge {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* ── Products Horizontal Scroll ── */
+.fd-products-scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 4px 16px 16px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.fd-products-scroll::-webkit-scrollbar { display: none; }
+
+.fd-loading, .fd-empty {
+  color: rgba(255,255,255,0.65);
+  font-size: 12px;
+  padding: 12px 0;
+}
+
+/* ── Product Card ── */
+.fd-prod-card {
+  flex-shrink: 0;
+  width: 140px;
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.18s;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+}
+.fd-prod-card:active { transform: scale(0.97); }
+
+.fd-prod-img-wrap {
+  position: relative;
+  background: #f8f4f0;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.fd-prod-img {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+}
+
+.fd-off-badge {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  background: #E91E8C;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 20px;
+}
+
+.fd-prod-info {
+  padding: 8px 10px 4px;
+  flex: 1;
+}
+
+.fd-prod-weight {
+  font-size: 10px;
+  color: #999;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.fd-prod-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1C3829;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fd-prod-price-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+}
+
+.fd-prod-price {
+  font-size: 14px;
+  font-weight: 800;
+  color: #E91E8C;
+}
+
+.fd-prod-mrp {
+  font-size: 11px;
+  color: #bbb;
+  text-decoration: line-through;
+}
+
+.fd-add-btn {
+  width: 100%;
+  padding: 8px;
+  background: #fff;
+  border: 1.5px solid #E91E8C;
+  color: #E91E8C;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  border-radius: 0 0 14px 14px;
+}
+.fd-add-btn:active {
+  background: #E91E8C;
+  color: #fff;
+}
+
+/* ── Zone Banner Timer FIX ── */
+/* Agar home-sections.js zone timer pill render karta hai to ye classes use hoti hain */
+.hs-zone-timer-count {
+  font-family: 'Space Mono', monospace, 'Outfit', sans-serif;
+  font-weight: 800;
+  letter-spacing: 1px;
+}

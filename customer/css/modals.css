@@ -1,0 +1,820 @@
+/* ============================================================
+   MODALS — SabziBuddy
+   Merged: toast + loader + bottom-sheet + modal overlays
+           + auth/login/OTP + coupon popup
+   ============================================================ */
+
+
+/* ════════════════════════════════════════
+   1. TOAST
+════════════════════════════════════════ */
+
+.toast {
+  position: fixed;
+  bottom: 80px;           /* clears bottom-nav (70px) + 10px gap */
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--td);
+  color: #fff;
+  padding: 11px 22px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 9999999;
+  display: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  max-width: 90vw;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.toast.success { background: var(--g2); }
+.toast.error   { background: var(--terra); }
+
+
+/* ════════════════════════════════════════
+   2. LOADERS + SPINNERS
+════════════════════════════════════════ */
+
+/* ── GENERIC SPINNER ─────────────────────────────────────── */
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--cream2);
+  border-top-color: var(--g3);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+.spinner--sm { width: 20px; height: 20px; border-width: 2px; }
+.spinner--lg { width: 52px; height: 52px; border-width: 4px; }
+
+/* ── FULLPAGE LOADER ─────────────────────────────────────── */
+.page-loader {
+  display: flex; align-items: center;
+  justify-content: center;
+  min-height: 180px; width: 100%;
+}
+
+/* ── MODAL LOADING ───────────────────────────────────────── */
+.modal-loading {
+  display: flex; align-items: center;
+  justify-content: center;
+  padding: 40px 0; width: 100%;
+}
+.modal-spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--cream2);
+  border-top-color: var(--g3);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+/* ── PRODUCTS GRID LOADING ───────────────────────────────── */
+/* NOTE: .products-loading layout also set in products.css */
+.products-spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--cream2);
+  border-top-color: var(--g3);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+/* ── PROFILE SPINNER ─────────────────────────────────────── */
+.pp-spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--cream2);
+  border-top-color: var(--g3);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin: 40px auto; display: block;
+}
+
+
+/* ════════════════════════════════════════
+   3. BOTTOM SHEET (reusable component)
+════════════════════════════════════════ */
+
+.bottom-sheet-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: var(--z-modal);
+  display: none;
+  align-items: flex-end; justify-content: center;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.bottom-sheet-overlay.open { display: flex; }
+
+.bottom-sheet {
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  width: 100%; max-width: 600px;
+  display: flex; flex-direction: column;
+  animation: slideUp 0.28s var(--ease-out);
+  max-height: 88vh;
+}
+
+/* Drag handle */
+.bottom-sheet-handle {
+  width: 40px; height: 4px;
+  background: var(--cream2);
+  border-radius: 2px;
+  margin: 12px auto 0; flex-shrink: 0;
+}
+
+/* Header row */
+.bottom-sheet-header {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--cream2);
+  flex-shrink: 0;
+}
+.bottom-sheet-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 17px; font-weight: 700; color: var(--td);
+}
+.bottom-sheet-close {
+  background: none; border: none;
+  font-size: 22px; cursor: pointer;
+  color: var(--tmut); transition: color var(--t-fast);
+  line-height: 1; padding: 4px;
+}
+.bottom-sheet-close:hover { color: var(--td); }
+
+/* Scrollable body */
+.bottom-sheet-body {
+  overflow-y: auto; flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: var(--cream2) transparent;
+}
+
+
+/* ════════════════════════════════════════
+   4. MODAL OVERLAYS
+   (base, legal, language, no-service, thank-you)
+════════════════════════════════════════ */
+
+/* ── BASE OVERLAY ────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: var(--z-modal);
+  display: none;
+  align-items: flex-end; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+
+.modal-sheet {
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  width: 100%; max-width: 600px;
+  display: flex; flex-direction: column;
+  animation: slideUp 0.3s var(--ease-out);
+}
+.modal-sheet--sm { max-height: 50vh; }
+.modal-sheet--md { max-height: 70vh; }
+.modal-sheet--lg { max-height: 85vh; }
+
+/* ── LEGAL SHEET ─────────────────────────────────────────── */
+.legal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: var(--z-modal);
+  display: none;
+  align-items: flex-end; justify-content: center;
+}
+.legal-overlay.open { display: flex; }
+
+.legal-sheet {
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  width: 100%; max-width: 600px;
+  max-height: 85vh;
+  display: flex; flex-direction: column;
+  animation: slideUp 0.3s var(--ease-out);
+}
+.legal-sheet--sm { max-height: 50vh; }
+
+.legal-header {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--cream2); flex-shrink: 0;
+}
+.legal-header h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 700; color: var(--g2);
+}
+.legal-close {
+  background: none; border: none;
+  font-size: 22px; cursor: pointer; color: var(--tmut);
+  transition: color var(--t-fast);
+}
+.legal-close:hover { color: var(--td); }
+
+.legal-body {
+  overflow-y: auto; padding: 20px; flex: 1;
+  scrollbar-width: thin; scrollbar-color: var(--cream2) transparent;
+}
+.legal-body h4 {
+  font-size: 14px; font-weight: 700;
+  color: var(--g2); margin: 16px 0 6px;
+}
+.legal-body h4:first-child { margin-top: 0; }
+.legal-body p,
+.legal-body li {
+  font-size: 13px; color: var(--tm);
+  line-height: 1.7; margin-bottom: 4px;
+}
+.legal-body ul { padding-left: 20px; }
+.legal-date { font-size: 12px; color: var(--tmut); margin-bottom: 16px; }
+
+/* ── LANGUAGE PICKER ─────────────────────────────────────── */
+.lang-list { padding: 12px 0; }
+
+.lang-option {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  width: 100%; padding: 16px 20px;
+  background: none; border: none; cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px; font-weight: 600; color: var(--td);
+  border-bottom: 1px solid var(--cream2);
+  transition: background var(--t-fast);
+}
+.lang-option:hover { background: var(--cream); }
+.lang-option:last-child { border-bottom: none; }
+.lang-check { color: var(--g2); font-size: 18px; }
+.lang-badge {
+  font-size: 11px; background: var(--cream2);
+  color: var(--g2); padding: 3px 9px;
+  border-radius: 20px; font-weight: 700;
+}
+
+/* ── NO SERVICE OVERLAY ──────────────────────────────────── */
+.no-service-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: calc(var(--z-overlay) + 10);
+  display: none;
+  align-items: flex-end; justify-content: center;
+}
+.no-service-overlay.open { display: flex; }
+
+.no-service-sheet {
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  width: 100%; max-width: 500px;
+  padding: 32px 24px 36px;
+  text-align: center;
+  animation: slideUp 0.3s var(--ease-out);
+}
+.no-service-icon { font-size: 48px; margin-bottom: 12px; }
+.no-service-sheet h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 700;
+  color: var(--g2); margin-bottom: 8px;
+}
+.no-service-sheet p {
+  font-size: 14px; color: var(--tmut);
+  line-height: 1.6; margin-bottom: 20px;
+}
+.no-service-btn {
+  background: var(--g2); color: #fff; border: none;
+  padding: 14px 32px; border-radius: var(--r-sm);
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px; font-weight: 600; cursor: pointer;
+  transition: background var(--t-fast) var(--ease);
+}
+.no-service-btn:hover { background: var(--g3); }
+
+/* ── THANK YOU OVERLAY ───────────────────────────────────── */
+.thankyou-overlay {
+  position: fixed; inset: 0;
+  background: rgba(28, 56, 41, 0.7);
+  z-index: var(--z-modal);
+  display: none;
+  align-items: center; justify-content: center;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 24px;
+}
+.thankyou-overlay.open { display: flex; }
+
+.thankyou-card {
+  background: #fff;
+  border-radius: var(--r-lg);
+  padding: 14px 14px 16px;
+  text-align: center;
+  max-width: 380px; width: 100%;
+  box-shadow: var(--shadow-lg);
+  animation: fadeUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  max-height: 92vh; overflow-y: auto;
+}
+.thankyou-icon    { font-size: 38px; margin-bottom: 8px; }
+.thankyou-card h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-weight: 700;
+  color: var(--g2); margin-bottom: 6px; line-height: 1.2;
+}
+.thankyou-card p       { font-size: 12px; color: var(--tmut); margin-bottom: 4px; line-height: 1.6; }
+.thankyou-orderid-lbl  { font-size: 11px; color: var(--tmut); }
+
+.order-id-badge {
+  display: inline-block;
+  background: var(--g2); color: var(--cream);
+  padding: 6px 16px; border-radius: 50px;
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 2px; margin: 6px 0 12px;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.thankyou-pin-box {
+  background: var(--cream); border-radius: 12px;
+  padding: 10px 14px; margin: 0 0 12px;
+  border: 1.5px dashed var(--cream2);
+}
+.thankyou-pin-lbl {
+  font-size: 10px; color: var(--tmut); font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;
+}
+.thankyou-pin-num {
+  font-size: 28px; font-weight: 700;
+  letter-spacing: 6px; color: var(--g2);
+}
+.thankyou-pin-sub { font-size: 11px; color: var(--tmut); margin-top: 4px; }
+
+.thankyou-close-btn {
+  background: var(--g2); color: #fff; border: none;
+  padding: 13px 28px; border-radius: var(--r-sm);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  width: 100%;
+  transition: background var(--t-fast) var(--ease);
+}
+.thankyou-close-btn:hover { background: var(--g3); }
+
+
+/* ════════════════════════════════════════
+   5. AUTH — Splash, Login, OTP
+════════════════════════════════════════ */
+
+/* ── SPLASH SCREEN ───────────────────────────────────────── */
+/* Flat brand-colour splash like the Zomato reference:
+   solid dark-green field, logo mark centred, wordmark under it.
+   Change --splash-bg below to swap the whole screen colour. */
+#splash-screen {
+  --splash-bg: linear-gradient(135deg, #e95322 0%, #f07a47 50%, #e95322 100%);
+  position: fixed; inset: 0;
+  background: var(--splash-bg);
+  z-index: var(--z-splash);
+  display: flex; align-items: center;
+  justify-content: center;
+  flex-direction: column; gap: 20px;
+}
+.splash-logo-img {
+  width: 160px; height: 160px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+  animation: splashPop .8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+#splash-screen::after {
+  content: "FOODIFY";
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: 14px; letter-spacing: 3px;
+  color: rgba(255, 255, 255, 0.7); text-transform: uppercase;
+  animation: fadeUp 0.8s ease-out 0.3s both;
+}
+@keyframes splashPop {
+  from { opacity: 0; transform: scale(.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── LOGIN SCREEN ────────────────────────────────────────── */
+/* Full-bleed image banner covering ~top 58% of the screen, plain white
+   sheet below — matches the reference "Log in or sign up" screen. */
+#login-screen {
+  position: fixed; inset: 0;
+  background: #000; /* fallback while banner image(s) load */
+  z-index: calc(var(--z-splash) - 1);
+  display: none; flex-direction: column;
+  overflow-y: auto; overscroll-behavior: contain;
+}
+
+.login-skip-btn {
+  position: absolute; top: 16px; right: 16px; z-index: 10;
+  background: rgba(255,255,255,.14); color: #fff;
+  border: 1px solid rgba(255,255,255,.35);
+  backdrop-filter: blur(4px);
+  border-radius: 20px; padding: 7px 15px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: background var(--t-fast) var(--ease);
+}
+.login-skip-btn:hover { background: rgba(255,255,255,.26); }
+
+.login-inner {
+  background: #fff; padding: 26px 24px 28px; text-align: center;
+  flex: 1;
+}
+/* Hidden by default — the banner above already carries the brand mark,
+   same as the reference. Set display:block to bring the logo back. */
+.login-logo { display: none; }
+.login-logo-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 26px; font-weight: 800;
+  color: #e95322; margin-bottom: 10px;
+}
+/* Brand heading shown above "Enter OTP", per reference screen */
+.otp-brand {
+  font-family: 'Poppins', sans-serif;
+  font-size: 24px; font-weight: 800;
+  color: #e95322; margin-bottom: 10px;
+}
+.login-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 21px; font-weight: 700;
+  color: var(--td); margin-bottom: 20px;
+}
+#otp-step-verify .login-title { margin-bottom: 8px; }
+.login-sub  { font-size: 13px; color: var(--tmut); margin-bottom: 22px; }
+#otp-step-verify .login-sub { color: #f07a47; font-weight: 500; margin-bottom: 14px; }
+.login-tnc  {
+  text-align: center; font-size: 11px; color: #999; margin-top: 14px;
+  line-height: 2;
+}
+.tnc-link {
+  background: none; border: none; color: #666;
+  font-size: 11px; cursor: pointer;
+  text-decoration: underline; font-family: 'Outfit', sans-serif;
+  padding: 0 2px;
+}
+
+/* ── TOP BANNER (full-bleed, ~58% of screen) ─────────────── */
+/* Frame size for the 4 slide images. Swap the images (same filenames)
+   with your final art at this same frame — adjust --hero-h to resize. */
+.spl-slider-wrap {
+  --hero-h: 58vh;
+  position: relative; width: 100%;
+  height: var(--hero-h);
+  min-height: 340px; max-height: 480px;
+  overflow: hidden; background: #000; flex-shrink: 0;
+}
+/* OTP-verify screen has no banner image — plain white sheet, per
+   reference "OTP Verification" screen. Slider is only for the phone
+   entry (Log in / sign up) step. */
+#login-screen.otp-verify-active .spl-slider-wrap { display: none; }
+#login-screen.otp-verify-active .login-inner { padding-top: 60px; }
+
+.spl-slides {
+  display: flex; width: 400%; height: 100%;
+  transition: transform 0.5s ease;
+}
+.spl-slide { width: 25%; height: 100%; object-fit: cover; flex-shrink: 0; }
+.spl-dots {
+  position: absolute; bottom: 14px; left: 50%;
+  transform: translateX(-50%); display: flex; gap: 5px;
+}
+.spl-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #fff; opacity: 0.45;
+  transition: opacity var(--t-fast) var(--ease);
+}
+.spl-dot.active { opacity: 1; }
+
+/* ── PHONE ROW (flag box + phone box, side by side) ───────── */
+.phone-row {
+  display: flex; gap: 10px; margin-bottom: 14px;
+}
+.flag-box {
+  flex-shrink: 0; width: 64px;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  border: 1.5px solid var(--cream2); border-radius: var(--r-sm);
+  background: var(--cream); font-size: 20px; color: var(--tmut);
+}
+.flag-box i { font-size: 10px; }
+
+.phone-input-wrap {
+  flex: 1;
+  display: flex; align-items: center;
+  border: 1.5px solid var(--cream2);
+  border-radius: var(--r-sm); overflow: hidden;
+  background: var(--cream);
+  transition: border-color var(--t-fast) var(--ease);
+}
+.phone-input-wrap:focus-within {
+  border-color: #e95322; background: #fff;
+  box-shadow: 0 0 0 3px rgba(233, 83, 34, 0.1);
+}
+.phone-prefix {
+  padding: 14px 8px 14px 16px;
+  font-size: 15px; font-weight: 700; color: var(--tm);
+  flex-shrink: 0; user-select: none;
+}
+.phone-input {
+  flex: 1; border: none; background: transparent;
+  padding: 14px 14px 14px 0; font-family: 'Outfit', sans-serif;
+  font-size: 15px; color: var(--td); outline: none;
+}
+
+/* ── OTP ERROR ───────────────────────────────────────────── */
+.otp-error {
+  font-size: 12px; color: var(--terra); font-weight: 600;
+  margin: -8px 0 10px; display: none;
+  text-align: left; padding-left: 4px;
+}
+
+/* ── REMEMBER ME ─────────────────────────────────────────── */
+.remember-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 20px; cursor: pointer;
+  font-size: 13.5px; color: var(--td); font-weight: 500;
+  text-align: left;
+}
+.remember-row input[type="checkbox"] {
+  position: absolute; opacity: 0; width: 0; height: 0;
+}
+.remember-box {
+  flex-shrink: 0; width: 20px; height: 20px; border-radius: 5px;
+  border: 2px solid var(--cream2); background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 11px;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.remember-row input:checked + .remember-box {
+  background: #f07a47; border-color: #f07a47;
+}
+
+/* ── SEND OTP BUTTON ─────────────────────────────────────── */
+.send-otp-btn {
+  width: 100%; padding: 16px;
+  background: #ccc; color: #fff; border: none;
+  border-radius: var(--r-sm);
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px; font-weight: 700; cursor: default;
+  transition: background var(--t-base) var(--ease);
+  margin-bottom: 12px;
+}
+.send-otp-btn.active          { background: #e95322; cursor: pointer; }
+.send-otp-btn.active:hover    { background: #f07a47; }
+
+/* ── CHANGE NUMBER ───────────────────────────────────────── */
+.otp-phone-label { font-weight: 700; color: #e95322; }
+.change-num-btn {
+  background: none; border: none; color: #f29968;
+  font-size: 12px; cursor: pointer;
+  font-family: 'Outfit', sans-serif; font-weight: 600;
+  text-decoration: underline; margin-bottom: 20px; display: block;
+}
+
+/* ── OTP BOXES ───────────────────────────────────────────── */
+.otp-boxes {
+  display: flex; gap: 8px;
+  justify-content: center; margin: 24px 0 20px;
+}
+.otp-box {
+  width: 44px; height: 54px;
+  text-align: center; font-size: 22px; font-weight: 700;
+  color: var(--td); border: 2px solid var(--cream2);
+  border-radius: 10px; background: var(--cream);
+  font-family: 'Outfit', sans-serif; outline: none;
+  transition: border-color var(--t-fast) var(--ease);
+}
+.otp-box:focus {
+  border-color: #e95322 !important;
+  background: #fff !important;
+  box-shadow: 0 0 0 3px rgba(233, 83, 34, 0.1);
+}
+.otp-box:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 40px var(--cream) inset;
+}
+.otp-boxes.shake { animation: otpShake 0.4s ease; }
+
+/* ── RESEND ROW ──────────────────────────────────────────── */
+.resend-row {
+  display: flex; align-items: center;
+  justify-content: center; gap: 6px;
+  font-size: 13px; color: var(--tmut);
+}
+.resend-timer {
+  font-weight: 700; color: #e95322;
+  min-width: 28px; text-align: center;
+}
+.resend-otp-btn {
+  background: none; border: none; color: #f29968;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  font-family: 'Outfit', sans-serif; text-decoration: underline;
+}
+
+/* ── SOCIAL LOGIN ROW (Google + Email, per reference) ─────── */
+.login-social-row {
+  display: flex; justify-content: center; gap: 16px;
+  margin-top: 4px;
+}
+.login-social-btn {
+  width: 52px; height: 52px; border-radius: 50%;
+  border: 1.5px solid var(--cream2); background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 19px; color: var(--td); cursor: pointer;
+  transition: border-color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+.login-social-btn:hover { border-color: #f29968; transform: translateY(-2px); }
+.login-social-btn .fa-google { color: #EA4335; }
+.login-social-btn .fa-envelope { color: #f07a47; }
+
+/* ── PRIMARY: CONTINUE WITH GOOGLE ───────────────────────── */
+.google-btn {
+  width: 100%; padding: 13px 16px;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  background: #fff; color: #3c4043;
+  border: 1px solid #dadce0; border-radius: 10px;
+  font-family: 'Outfit', 'Roboto', sans-serif; font-size: 15px; font-weight: 600;
+  cursor: pointer; margin-bottom: 18px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.06);
+  transition: box-shadow var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.google-btn .google-icon { width: 20px; height: 20px; flex-shrink: 0; }
+.google-btn:hover {
+  background: #f8f8f8;
+  box-shadow: 0 2px 6px rgba(0,0,0,.12);
+}
+.google-btn:active { background: #f1f1f1; }
+
+/* ── DIVIDER ("OR") ───────────────────────────────────────── */
+.login-divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 0 0 18px; color: var(--tmut);
+  font-size: 12px; font-weight: 700; letter-spacing: .04em;
+}
+.login-divider::before,
+.login-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--cream2);
+}
+
+
+/* ════════════════════════════════════════
+   6. COUPON — Input + Success Popup
+════════════════════════════════════════ */
+
+/* ── COUPON INPUT ────────────────────────────────────────── */
+.coupon-input-wrap {
+  position: relative; display: flex; align-items: center;
+}
+.coupon-input-wrap input { flex: 1; padding-right: 80px; }
+
+.coupon-clear-x {
+  position: absolute; right: 76px;
+  background: none; border: none;
+  color: var(--tmut); font-size: 18px;
+  cursor: pointer; padding: 4px; display: none;
+  transition: color var(--t-fast);
+}
+.coupon-clear-x:hover   { color: var(--td); }
+.coupon-clear-x.visible { display: flex; align-items: center; }
+
+.coupon-apply-btn {
+  position: absolute; right: 0;
+  background: var(--g2); color: #fff; border: none;
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  padding: 0 16px; height: 100%;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  transition: background var(--t-fast) var(--ease);
+}
+.coupon-apply-btn:hover { background: var(--g3); }
+
+.coupon-msg {
+  font-size: 12px; font-weight: 600;
+  margin-top: 6px; display: none;
+}
+.coupon-msg.success { color: var(--green-price); display: block; }
+.coupon-msg.error   { color: var(--terra); display: block; }
+
+.see-coupons-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: none;
+  border: 1.5px dashed var(--cream2);
+  border-radius: var(--r-sm);
+  padding: 10px 14px; width: 100%;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px; font-weight: 600;
+  color: var(--g3); cursor: pointer;
+  transition: border-color var(--t-fast) var(--ease),
+              background   var(--t-fast) var(--ease);
+  margin-top: 8px;
+}
+.see-coupons-btn:hover {
+  border-color: var(--g3);
+  background: rgba(45, 90, 63, 0.04);
+}
+
+/* ── COUPON LIST ─────────────────────────────────────────── */
+.coupon-list-item {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--cream2);
+  cursor: pointer; transition: background var(--t-fast);
+}
+.coupon-list-item:hover { background: var(--cream); }
+.coupon-list-code {
+  font-size: 14px; font-weight: 800;
+  color: var(--g2); letter-spacing: 1px; margin-bottom: 4px;
+}
+.coupon-list-desc  { font-size: 12px; color: var(--tmut); }
+.coupon-list-apply {
+  background: none; border: none; color: var(--g3);
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  text-decoration: underline; margin-top: 6px; display: block;
+}
+
+/* ── COUPON SUCCESS POPUP ────────────────────────────────── */
+.coupon-success-overlay {
+  position: fixed; inset: 0;
+  background: rgba(10, 28, 18, 0.72);
+  z-index: calc(var(--z-modal) + 50);
+  display: none;
+  align-items: center; justify-content: center;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 24px;
+}
+.coupon-success-overlay.open { display: flex; }
+
+.coupon-success-card {
+  background: #fff;
+  border-radius: var(--r-lg);
+  padding: 0 0 28px;
+  text-align: center;
+  max-width: 340px; width: 100%;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+  position: relative; overflow: hidden;
+  animation: csCardPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.cs-fireworks-zone {
+  position: relative; height: 140px;
+  background: linear-gradient(160deg, var(--g1) 0%, var(--g2) 50%, var(--g3) 100%);
+  overflow: hidden;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  display: flex; align-items: center;
+  justify-content: center; flex-direction: column; gap: 4px;
+}
+.cs-fireworks-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; pointer-events: none;
+}
+.cs-popup-emoji {
+  font-size: 44px; position: relative; z-index: 2;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+}
+.cs-awesome-txt {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 700;
+  color: #fff; position: relative; z-index: 2;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+.cs-body          { padding: 22px 24px 0; }
+.cs-applied-label { font-size: 13px; color: var(--tmut); margin-bottom: 8px; font-weight: 500; }
+
+.cs-code-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(107, 191, 123, 0.12);
+  color: var(--g2); border: 1.5px dashed var(--ga);
+  border-radius: 30px; padding: 6px 18px;
+  font-size: 14px; font-weight: 700;
+  letter-spacing: 1.5px; margin-bottom: 18px;
+}
+.cs-saved-label {
+  font-size: 12px; color: var(--tmut); font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;
+}
+.cs-amount-row {
+  display: flex; align-items: baseline;
+  justify-content: center; gap: 4px; margin-bottom: 20px;
+}
+.cs-rupee-sym {
+  font-family: 'Outfit', sans-serif;
+  font-size: 80px; font-weight: 700;
+  color: var(--g2); line-height: 1;
+}
+.cs-big-num {
+  font-family: 'Outfit', sans-serif;
+  font-size: 80px; font-weight: 800;
+  color: var(--g2); line-height: 1; letter-spacing: -2px;
+  animation: numBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+}
+.cs-wohoo-btn {
+  width: calc(100% - 48px); padding: 14px;
+  background: var(--g2); color: #fff; border: none;
+  border-radius: var(--r-sm);
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px; font-weight: 600; cursor: pointer;
+  transition: all var(--t-fast) var(--ease);
+  margin: 0 24px;
+}
+.cs-wohoo-btn:hover { background: var(--g3); transform: translateY(-1px); }
+
+/* Cart ke upar coupon overlay */
+#coupons-overlay {
+  z-index: 99999 !important;
+}

@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SabziBuddy — Fresh Produce, Delivered Fast</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Cormorant+Garamond:wght@600;700&family=Poppins:wght@700;800&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <!-- ═══ App CSS (load order matters) ═══ -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/location-modal.css">
+  <link rel="stylesheet" href="css/products.css">
+  <link rel="stylesheet" href="css/product-carousel.css">
+  <link rel="stylesheet" href="css/rating-badge.css">
+  <link rel="stylesheet" href="css/product-detail.css">
+  <link rel="stylesheet" href="css/cart.css">
+  <link rel="stylesheet" href="css/order.css">
+  <link rel="stylesheet" href="css/profile.css">
+  <link rel="stylesheet" href="css/map.css">
+  <link rel="stylesheet" href="css/modals.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <link rel="stylesheet" href="css/home-sections.css">
+  <link rel="stylesheet" href="css/category-page.css">
+  <link rel="stylesheet" href="css/checkout-address.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SPLASH SCREEN
+═══════════════════════════════════════════════════════════════ -->
+<div id="splash-screen">
+  <div class="splash-content">
+    <div class="splash-logo-wrapper">
+      <svg class="splash-logo-img" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="20" width="160" height="160" rx="20" fill="white" opacity="0.1"/>
+        <path d="M100 40 C110 40 120 45 125 55 L140 85 C145 95 140 110 130 115 L70 115 C60 110 55 95 60 85 L75 55 C80 45 90 40 100 40 Z" fill="white"/>
+        <circle cx="85" cy="130" r="8" fill="white"/>
+        <circle cx="115" cy="130" r="8" fill="white"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     LOGIN SCREEN
+═══════════════════════════════════════════════════════════════ -->
+<div id="login-screen">
+
+  <!-- Skip button -->
+  <button class="login-skip-btn" onclick="skipLogin()">Skip ›</button>
+
+  <!-- Top banner — fills ~60% of the screen, edge-to-edge, like the
+       reference. Swap these 4 images (same filenames/sizes) with your
+       final art later — frame size is controlled by .spl-slider-wrap
+       in css/modals.css (--hero-h). -->
+  <div class="spl-slider-wrap">
+    <div id="spl-slides" class="spl-slides">
+      <img src="assets/splash_banners/splash-1.webp" class="spl-slide">
+      <img src="assets/splash_banners/splash-2.webp" class="spl-slide">
+      <img src="assets/splash_banners/splash-3.webp" class="spl-slide">
+      <img src="assets/splash_banners/splash-4.webp" class="spl-slide">
+    </div>
+    <div class="spl-dots" id="spl-dots">
+      <div class="spl-dot active" id="dot0"></div>
+      <div class="spl-dot" id="dot1"></div>
+      <div class="spl-dot" id="dot2"></div>
+      <div class="spl-dot" id="dot3"></div>
+    </div>
+  </div>
+
+  <div class="login-inner">
+
+    <!-- Logo — hidden by default (brand now lives inside the banner
+         image, like the reference). Set .login-logo{display:block} in
+         css/modals.css if you want it back. -->
+    <img src="../SabziBuddy.svg" class="login-logo"
+      onerror="this.outerHTML='<div class=\'login-logo-text\'>FOODIFY</div>'">
+
+    <!-- ── STEP 1: Phone Entry ── -->
+    <div id="otp-step-phone">
+      <div class="login-title">Welcome Back 👋</div>
+
+      <!-- Primary: Continue with Google -->
+      <button type="button" class="google-btn" id="google-continue-btn" onclick="signInWithGoogle()">
+        <svg class="google-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
+          <path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/>
+          <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0124 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/>
+          <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 01-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
+        </svg>
+        <span>Continue with Google</span>
+      </button>
+
+      <div class="login-divider"><span>OR</span></div>
+
+      <div class="phone-row">
+        <div class="flag-box">
+          <span class="flag-emoji">🇮🇳</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </div>
+        <div class="phone-input-wrap" id="phone-input-wrap"
+          onfocusin="this.style.borderColor='#e95322'"
+          onfocusout="this.style.borderColor='#e0dbd2'">
+          <span class="phone-prefix">+91</span>
+          <input
+            type="tel"
+            id="login-phone"
+            class="phone-input"
+            placeholder="Enter Phone Number"
+            maxlength="10"
+            inputmode="numeric"
+            oninput="onLoginPhoneInput(this)"
+            onkeydown="if(event.key==='Enter')sendOTP()">
+        </div>
+      </div>
+
+      <div class="otp-error" id="otp-phone-error"></div>
+
+      <label class="remember-row">
+        <input type="checkbox" id="remember-login-chk" checked>
+        <span class="remember-box"><i class="fa-solid fa-check"></i></span>
+        Remember my login for faster sign-in
+      </label>
+
+      <button class="send-otp-btn" id="send-otp-btn" onclick="sendOTP()">
+        Continue
+      </button>
+
+      <div class="login-tnc">
+        By continuing, you agree to our
+        <button onclick="openTerms()" class="tnc-link">Terms of Service</button>
+        <button onclick="openPrivacy()" class="tnc-link">Privacy Policy</button>
+        <button onclick="openModal('content-overlay')" class="tnc-link">Content Policy</button>
+
+      </div>
+    </div>
+
+    <!-- ── STEP 2: OTP Verify ── -->
+    <div id="otp-step-verify" class="hidden">
+      <div class="otp-brand" style="color:#e95322">FOODIFY</div>
+      <div class="login-title">Enter OTP</div>
+      <div class="login-sub">
+        OTP sent to <span class="otp-phone-label" id="otp-sent-to-label">+91 XXXXXXXXXX</span>
+      </div>
+      <button onclick="changePhoneNumber()" class="change-num-btn">Change number</button>
+
+      <!-- 6-box OTP Input -->
+      <div id="otp-boxes" class="otp-boxes">
+        <input class="otp-box" type="tel" maxlength="1" inputmode="numeric"
+          autocomplete="one-time-code"
+          oninput="otpBoxInput(this,0)" onkeydown="otpBoxKey(event,0)" onfocus="this.select()">
+        <input class="otp-box" type="tel" maxlength="1" inputmode="numeric"
+          oninput="otpBoxInput(this,1)" onkeydown="otpBoxKey(event,1)" onfocus="this.select()">
+        <input class="otp-box" type="tel" maxlength="1" inputmode="numeric"
+          oninput="otpBoxInput(this,2)" onkeydown="otpBoxKey(event,2)" onfocus="this.select()">
+        <input class="otp-box" type="tel" maxlength="1" inputmode="numeric"
+          oninput="otpBoxInput(this,3)" onkeydown="otpBoxKey(event,3)" onfocus="this.select()">
+        <input class="otp-box" type="tel" maxlength="1" inputmode="numeric"
+          oninput="otpBoxInput(this,4)" onkeydown="otpBoxKey(event,4)" onfocus="this.select()">
+        <input class="otp-box" type="tel" maxlength="1" inputmode="numeric"
+          oninput="otpBoxInput(this,5)" onkeydown="otpBoxKey(event,5)" onfocus="this.select()">
+      </div>
+
+      <div class="otp-error" id="otp-verify-error"></div>
+
+      <button class="send-otp-btn" id="verify-otp-btn" onclick="verifyOTP()">
+        Verify &amp; Continue
+      </button>
+
+      <div class="resend-row">
+        <span id="resend-countdown-text">Resend OTP in</span>
+        <span id="resend-timer" class="resend-timer">30s</span>
+        <button id="resend-btn" class="resend-otp-btn hidden" onclick="resendOTP()">
+          Resend OTP
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /.login-inner -->
+  <div id="recaptcha-container" style="display:none"></div>
+</div><!-- /#login-screen -->
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SVG DEFS (map pin gradient — must be in DOM)
+═══════════════════════════════════════════════════════════════ -->
+<svg width="0" height="0" style="position:absolute;overflow:hidden">
+  <defs>
+    <linearGradient id="pinGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#ff7043"/>
+      <stop offset="100%" stop-color="#e53935"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════════════════════════ -->
+<header>
+  <div class="header-row">
+
+    <!-- Delivery Location -->
+    <div class="delivery-loc-row" onclick="openMapPicker()">
+      <svg width="18" height="18" viewBox="0 0 24 24" style="flex-shrink:0;filter:drop-shadow(0 1px 3px rgba(229,57,53,0.4))">
+        <ellipse cx="12" cy="21" rx="4" ry="1.5" fill="rgba(0,0,0,0.18)"/>
+        <path fill="url(#pinGrad)" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+        <circle cx="12" cy="9" r="3" fill="white"/>
+        <circle cx="10.5" cy="7.5" r="1" fill="rgba(255,255,255,0.7)"/>
+      </svg>
+      <div class="dlr-text">
+        <div class="dlr-city-row">
+          <span id="dlr-city">Firozabad</span>
+          <span class="dlr-chevron">▾</span>
+        </div>
+        <div id="dlr-addr-text" class="dlr-addr">Fetching your location...</div>
+      </div>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+
+      <!-- Cart Icon -->
+      <button class="cart-icon-btn" onclick="openCart()" title="Cart">
+        <span class="cart-emoji">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="22" height="22">
+            <path fill="#ffffff" d="M24 48C10.7 48 0 58.7 0 72C0 85.3 10.7 96 24 96L69.3 96C73.2 96 76.5 98.8 77.2 102.6L129.3 388.9C135.5 423.1 165.3 448 200.1 448L456 448C469.3 448 480 437.3 480 424C480 410.7 469.3 400 456 400L200.1 400C188.5 400 178.6 391.7 176.5 380.3L171.4 352L475 352C505.8 352 532.2 330.1 537.9 299.8L568.9 133.9C572.6 114.2 557.5 96 537.4 96L124.7 96L124.3 94C119.5 67.4 96.3 48 69.2 48L24 48zM208 576C234.5 576 256 554.5 256 528C256 501.5 234.5 480 208 480C181.5 480 160 501.5 160 528C160 554.5 181.5 576 208 576zM432 576C458.5 576 480 554.5 480 528C480 501.5 458.5 480 432 480C405.5 480 384 501.5 384 528C384 554.5 405.5 576 432 576z"/>
+          </svg>
+        </span>
+        <div class="cart-badge" id="cart-count">0</div>
+        <div class="cart-total-display" id="cart-total-header"></div>
+      </button>
+
+      <!-- Profile Icon -->
+      <button class="profile-icon-btn" id="profile-icon-btn" onclick="openProfile()" title="Profile">
+        <svg viewBox="0 0 24 24">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ═══ SEARCH BAR ═══ -->
+  <div class="search-section">
+    <div class="search-inner">
+      <svg class="search-icon-svg" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" id="search" placeholder='Search for "Bhindi"'
+        oninput="onSearchInput(this.value)"
+        onfocus="loadSearchHistory()"
+        onblur="hideSearchSuggestions()">
+      <button class="clear-search-btn" id="clear-search-btn" onclick="clearSearchInput()" title="Clear">&#x2715;</button>
+      <button class="voice-btn" id="voice-btn" onclick="startVoiceSearch()" title="Voice Search">
+        <svg viewBox="0 0 24 24">
+          <rect x="9" y="2" width="6" height="12" rx="3"/>
+          <path d="M5 10a7 7 0 0014 0"/>
+          <line x1="12" y1="22" x2="12" y2="17"/>
+        </svg>
+      </button>
+    </div>
+    <div id="search-suggestions"></div>
+  </div>
+</header>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     MAIN BANNER SLIDER (absolutely positioned from page top,
+     behind the transparent header — replace images below with
+     your own full hero banner whenever ready)
+═══════════════════════════════════════════════════════════════ -->
+<div class="main-banner-wrap">
+  <div id="main-slides" class="main-slides">
+    <img src="assets/home_banners/banner-1.webp" class="main-slide">
+    <img src="assets/home_banners/banner-2.webp" class="main-slide">
+    <img src="assets/home_banners/banner-3.webp" class="main-slide">
+    <img src="assets/home_banners/banner-4.webp" class="main-slide">
+  </div>
+  <div class="main-banner-dots">
+    <div id="mb-dot0" class="mb-dot active"></div>
+    <div id="mb-dot1" class="mb-dot"></div>
+    <div id="mb-dot2" class="mb-dot"></div>
+    <div id="mb-dot3" class="mb-dot"></div>
+  </div>
+</div>
+<!-- Spacer: reserves scroll space for the part of the banner that
+     peeks out below the header. Tune this px value (and the
+     .main-banner-wrap height in base.css) once the real banner is in. -->
+<div style="height:114px"></div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     FREE DELIVERY BAR
+═══════════════════════════════════════════════════════════════ -->
+<div id="free-delivery-bar">
+  <div class="fd-wrap">
+    <div class="fd-circle">
+      <svg width="38" height="38" viewBox="0 0 38 38">
+        <circle cx="19" cy="19" r="15" fill="none" stroke="#e8e0d4" stroke-width="3.5"/>
+        <circle id="fd-fill" cx="19" cy="19" r="15" fill="none" stroke="#1C3829"
+          stroke-width="3.5" stroke-linecap="round"
+          stroke-dasharray="94.25" stroke-dashoffset="94.25"/>
+      </svg>
+      <div class="fd-emoji" id="fd-emoji">🚚</div>
+    </div>
+    <div class="fd-text" id="fd-text">
+      Shop for <strong>₹<span id="fd-rem">99</span> more</strong> to unlock free delivery
+    </div>
+  </div>
+  <button class="fd-close" onclick="document.getElementById('free-delivery-bar').style.display='none'">×</button>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     CATEGORY NAVIGATION
+═══════════════════════════════════════════════════════════════ -->
+<div class="top-cats" id="top-cats">
+  <div id="cat-indicator"></div>
+
+  <!-- ₹1 Zone -->
+  <button class="top-cat-btn" data-cat="zone" data-catkey="zone" onclick="goToZone(this)">
+    <div class="cat-img-wrap">
+      <div id="zone-lottie" class="zone-lottie" aria-label="₹1 Zone"></div>
+    </div>
+    <span id="zone-cat-label">Best Offers</span>
+  </button>
+
+  <!-- All Categories -->
+  <button class="top-cat-btn active" data-cat="all" data-catkey="all" onclick="switchTopCat('all',this)">
+    <div class="cat-img-wrap"><img class="cat-img" src="assets/category_tiles/All.webp" alt="All" onerror="this.outerHTML='<span style=\'font-size:28px\'>🛒</span>'"></div>
+    All
+  </button>
+
+  <button class="top-cat-btn" data-cat="burger" data-catkey="burger" onclick="switchTopCat('burger',this)">
+    <div class="cat-img-wrap"><img class="cat-img" src="assets/category_tiles/Burger.webp" alt="Burger" onerror="this.outerHTML='<span style=\'font-size:28px\'>🍔</span>'"></div>
+    Burger
+  </button>
+  <button class="top-cat-btn" data-cat="pizza" data-catkey="pizza" onclick="switchTopCat('pizza',this)">
+    <div class="cat-img-wrap"><img class="cat-img" src="assets/category_tiles/Pizza.webp" alt="Pizza" onerror="this.outerHTML='<span style=\'font-size:28px\'>🍕</span>'"></div>
+    Pizza
+  </button>
+  <button class="top-cat-btn" data-cat="thali" data-catkey="thali" onclick="switchTopCat('thali',this)">
+    <div class="cat-img-wrap"><img class="cat-img" src="assets/category_tiles/Thali.webp" alt="Thali" onerror="this.outerHTML='<span style=\'font-size:28px\'>🍛</span>'"></div>
+    Thali
+  </button>
+  <button class="top-cat-btn" data-cat="poha" data-catkey="poha" onclick="switchTopCat('poha',this)">
+    <div class="cat-img-wrap"><img class="cat-img" src="assets/category_tiles/Poha.webp" alt="Poha" onerror="this.outerHTML='<span style=\'font-size:28px\'>🍚</span>'"></div>
+    Poha
+  </button>
+  <button class="top-cat-btn" data-cat="drink" data-catkey="drink" onclick="switchTopCat('drink',this)">
+    <div class="cat-img-wrap"><img class="cat-img" src="assets/category_tiles/Drink.webp" alt="Drink" onerror="this.outerHTML='<span style=\'font-size:28px\'>🥤</span>'"></div>
+    Drink
+  </button>
+  <button class="top-cat-btn" data-cat="chole-bhature" data-catkey="chole-bhature" onclick="switchTopCat('chole-bhature',this)">
+    <div class="cat-img-wrap"><img class="cat-img" src="assets/category_tiles/Chole_Bhature.webp" alt="Chole Bhature" onerror="this.outerHTML='<span style=\'font-size:28px\'>🫘</span>'"></div>
+    Chole Bhature
+  </button>
+  <button class="top-cat-btn" data-cat="paratha" data-catkey="paratha" onclick="switchTopCat('paratha',this)">
+    <div class="cat-img-wrap"><img class="cat-img" src="assets/category_tiles/Paratha.webp" alt="Paratha" onerror="this.outerHTML='<span style=\'font-size:28px\'>🫓</span>'"></div>
+    Paratha
+  </button>
+  <button class="top-cat-btn" data-cat="paneer" data-catkey="paneer" onclick="switchTopCat('paneer',this)">
+    <div class="cat-img-wrap"><img class="cat-img" src="assets/category_tiles/Paneer.webp" alt="Paneer" onerror="this.outerHTML='<span style=\'font-size:28px\'>🧀</span>'"></div>
+    Paneer
+  </button>
+</div>
+
+<!-- Premium soft divider — Swiggy/Zomato style, sits below the
+     sticky category tiles, above the sub-category filters -->
+<div class="cat-section-divider"></div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SUB-CATEGORY FILTERS
+═══════════════════════════════════════════════════════════════ -->
+<div class="filter-row" id="burger-filters" style="display:none">
+  <button class="filter-btn active" onclick="filterSub('all',this)">All</button>
+  <button class="filter-btn" onclick="filterSub('leafy',this)">🥬 Leafy</button>
+  <button class="filter-btn" onclick="filterSub('root',this)">🥕 Root</button>
+  <button class="filter-btn" onclick="filterSub('gourds',this)">🥒 Gourds</button>
+  <button class="filter-btn" onclick="filterSub('basics',this)">🧅 Basics</button>
+  <button class="filter-btn" onclick="filterSub('exotic',this)">🍄 Exotic</button>
+</div>
+
+<div class="filter-row" id="pizza-filters" style="display:none">
+  <button class="filter-btn active" onclick="filterSub('all',this)">All</button>
+  <button class="filter-btn" onclick="filterSub('citrus',this)">🍋 Citrus</button>
+  <button class="filter-btn" onclick="filterSub('tropical',this)">🥭 Tropical</button>
+  <button class="filter-btn" onclick="filterSub('berries',this)">🍓 Berries</button>
+  <button class="filter-btn" onclick="filterSub('seasonal',this)">🍈 Seasonal</button>
+  <button class="filter-btn" onclick="filterSub('dry',this)">🍇 Dry Fruits</button>
+</div>
+
+<div class="filter-row" id="thali-filters" style="display:none">
+  <button class="filter-btn active" onclick="filterSub('all',this)">All</button>
+  <button class="filter-btn" onclick="filterSub('milk',this)">🥛 Milk</button>
+  <button class="filter-btn" onclick="filterSub('paneer',this)">🧀 Paneer</button>
+  <button class="filter-btn" onclick="filterSub('curd',this)">🫙 Curd</button>
+  <button class="filter-btn" onclick="filterSub('butter',this)">🧈 Butter &amp; Ghee</button>
+  <button class="filter-btn" onclick="filterSub('icecream',this)">🍦 Ice Cream</button>
+</div>
+
+<div class="filter-row" id="poha-filters" style="display:none">
+  <button class="filter-btn active" onclick="filterSub('all',this)">All</button>
+  <button class="filter-btn" onclick="filterSub('atta',this)">🌾 Atta</button>
+  <button class="filter-btn" onclick="filterSub('rice',this)">🍚 Rice &amp; Dal</button>
+  <button class="filter-btn" onclick="filterSub('oil',this)">🫙 Oil</button>
+  <button class="filter-btn" onclick="filterSub('spices',this)">🌶️ Masala</button>
+  <button class="filter-btn" onclick="filterSub('sugar',this)">🍬 Sugar &amp; Salt</button>
+  <button class="filter-btn" onclick="filterSub('noodles',this)">🍜 Noodles</button>
+</div>
+
+<div class="filter-row" id="drink-filters" style="display:none">
+  <button class="filter-btn active" onclick="filterSub('all',this)">All</button>
+  <button class="filter-btn" onclick="filterSub('snacks',this)">🍟 Snacks</button>
+  <button class="filter-btn" onclick="filterSub('beverages',this)">🥤 Beverages</button>
+  <button class="filter-btn" onclick="filterSub('sweets',this)">🍬 Sweets</button>
+  <button class="filter-btn" onclick="filterSub('bakery',this)">🥐 Bakery</button>
+  <button class="filter-btn" onclick="filterSub('instant',this)">🍜 Instant</button>
+</div>
+
+<div class="filter-row" id="paratha-filters" style="display:none">
+  <button class="filter-btn active" onclick="filterSub('all',this)">All</button>
+  <button class="filter-btn" onclick="filterSub('cables',this)">🔌 Cables</button>
+  <button class="filter-btn" onclick="filterSub('bulbs',this)">💡 Bulbs</button>
+  <button class="filter-btn" onclick="filterSub('batteries',this)">🔋 Batteries</button>
+  <button class="filter-btn" onclick="filterSub('accessories',this)">🎧 Accessories</button>
+  <button class="filter-btn" onclick="filterSub('homeappliance',this)">🏠 Appliances</button>
+</div>
+
+<div class="filter-row" id="chole-bhature-filters" style="display:none">
+  <button class="filter-btn active" onclick="filterSub('all',this)">All</button>
+  <button class="filter-btn" onclick="filterSub('cleaning',this)">🧹 Cleaning</button>
+  <button class="filter-btn" onclick="filterSub('cookware',this)">🍳 Cookware</button>
+  <button class="filter-btn" onclick="filterSub('storage',this)">🪣 Storage</button>
+  <button class="filter-btn" onclick="filterSub('detergent',this)">🧴 Detergents</button>
+  <button class="filter-btn" onclick="filterSub('decor',this)">🛋️ Decor</button>
+  <button class="filter-btn" onclick="filterSub('pooja',this)">🪔 Pooja Items</button>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION HEADER + PRODUCTS GRID
+═══════════════════════════════════════════════════════════════ -->
+<div class="section-head" id="section-head">
+  <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
+    <span class="section-title" id="section-title">Fresh Vegetables</span>
+    <span class="section-count" id="section-count"></span>
+  </div>
+
+</div>
+<div class="section-sub" id="section-sub">All prices per pack • Updated daily</div>
+
+<div id="flash-deal-section" style="display:none"></div>
+<div id="buy-again-section" style="display:none"></div>
+<div id="home-sections"></div>
+<div class="products" id="products">
+  <div class="products-loading">
+    <div class="products-spinner"></div>
+    Loading fresh products...
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-follow-lbl">Follow us on:</div>
+  <div class="social-row">
+    <button class="social-btn social-instagram" onclick="window.open('https://instagram.com/sabzibuddy')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5"/>
+        <circle cx="12" cy="12" r="4.5"/>
+        <circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none"/>
+      </svg>
+    </button>
+    <button class="social-btn social-facebook" onclick="window.open('https://facebook.com/sabzibuddy')">
+      <svg viewBox="0 0 24 24" fill="#fff">
+        <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+      </svg>
+    </button>
+    <button class="social-btn social-x" onclick="window.open('https://x.com/sabzibuddy')">
+      <svg viewBox="0 0 24 24" fill="#fff">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+      </svg>
+    </button>
+    <button class="social-btn social-youtube" onclick="window.open('https://youtube.com/@sabzibuddy')">
+      <svg viewBox="0 0 24 24" fill="#fff">
+        <path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.4a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z"/>
+        <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#FF0000"/>
+      </svg>
+    </button>
+  </div>
+  <div class="footer-links">
+    <button class="footer-link" onclick="openPrivacy()">Privacy Policy</button>
+    <button class="footer-link" onclick="openTerms()">Terms &amp; Conditions</button>
+    <button class="footer-link" onclick="openProfile()">My Profile</button>
+  </div>
+  <div class="footer-copy">
+    © 2026 SabziBuddy. All rights reserved.<br>
+    Fresh Produce, Delivered Fast
+  </div>
+</footer>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     TOAST + CELEBRATION CANVAS
+═══════════════════════════════════════════════════════════════ -->
+<div class="toast" id="toast"></div>
+<canvas id="celebration-canvas"></canvas>
+<div id="celebration-emojis"></div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     CART PANEL
+═══════════════════════════════════════════════════════════════ -->
+<div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
+<div class="cart-panel" id="cart-panel">
+  <div class="cart-panel-header">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="20" height="20">
+        <path fill="#ffffff" d="M24 48C10.7 48 0 58.7 0 72C0 85.3 10.7 96 24 96L69.3 96C73.2 96 76.5 98.8 77.2 102.6L129.3 388.9C135.5 423.1 165.3 448 200.1 448L456 448C469.3 448 480 437.3 480 424C480 410.7 469.3 400 456 400L200.1 400C188.5 400 178.6 391.7 176.5 380.3L171.4 352L475 352C505.8 352 532.2 330.1 537.9 299.8L568.9 133.9C572.6 114.2 557.5 96 537.4 96L124.7 96L124.3 94C119.5 67.4 96.3 48 69.2 48L24 48zM208 576C234.5 576 256 554.5 256 528C256 501.5 234.5 480 208 480C181.5 480 160 501.5 160 528C160 554.5 181.5 576 208 576zM432 576C458.5 576 480 554.5 480 528C480 501.5 458.5 480 432 480C405.5 480 384 501.5 384 528C384 554.5 405.5 576 432 576z"/>
+      </svg>
+      Your Cart
+    </h2>
+    <div class="cart-header-actions">
+      <button class="close-btn" onclick="clearCart()" title="Clear Cart">🗑️</button>
+      <button class="close-btn" onclick="closeCart()">✕</button>
+    </div>
+  </div>
+
+  <!-- Savings Banner -->
+  <div id="cart-savings-banner" style="display:none;" class="cart-savings-banner">
+    🎉 Yay! You saved <strong>₹<span id="cart-savings-amt">0</span></strong> on this order
+  </div>
+
+  <!-- Cart Free Delivery Bar -->
+<div class="cart-fd-bar" id="cart-fd-bar">
+    <div class="cart-fd-top">
+      <div class="cart-fd-track-wrap">
+        <div class="cart-fd-track">
+          <div class="cart-fd-fill" id="cart-fd-fill"></div>
+        </div>
+        <div class="cart-fd-truck" id="cart-fd-truck">🚚</div>
+      </div>
+    </div>
+    <div id="cart-fd-text" class="cart-fd-text"></div>
+  </div>
+
+  <div class="cart-items">
+    <div id="cart-items-list"></div>
+    <div id="cart-bill-summary" style="display:none;"></div>
+  </div>
+
+  <div class="cart-footer">
+    <div class="cart-total-row">
+      <span class="cart-total-label">Total Amount</span>
+      <span class="cart-total-amt">₹<span id="cart-total">0</span></span>
+    </div>
+    <div class="min-order-notice" id="min-order-notice">
+      ⚠️ Minimum order ₹<span id="min-order-amt">99</span> required
+    </div>
+    <button class="order-btn" id="proceed-btn" onclick="openCheckout()">🛒 Proceed to Checkout →</button>  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     CHECKOUT / ORDER PAGE
+═══════════════════════════════════════════════════════════════ -->
+<div class="profile-page" id="order-sec">
+  <div class="pp-header">
+    <button class="page-back-btn page-back-btn--header" onclick="handleCheckoutBack()" aria-label="Back">
+  <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+</button>
+    <span class="pp-header-title">📦 Checkout</span>
+    <div class="pp-header-spacer"></div>
+  </div>
+
+  <!-- Steps indicator injected by checkout-address.js -->
+
+  <div class="checkout-scroll">
+    <!-- Content injected by initCheckoutAddress() -->
+  </div>
+</div><!-- /#order-sec -->
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     ADD NEW ADDRESS PAGE (Map on top + Form below)
+═══════════════════════════════════════════════════════════════ -->
+<div class="profile-page" id="co-add-addr-page">
+  <div class="pp-header">
+    <button class="page-back-btn page-back-btn--header" onclick="_coCloseAddAddrPage()" aria-label="Back">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <span class="pp-header-title">Add New Address</span>
+    <div class="pp-header-spacer"></div>
+  </div>
+
+  <div class="co-add-addr-scroll">
+
+    <!-- Map on top -->
+    <div class="co-add-map-wrap">
+      <div id="co-add-map"></div>
+      <!-- Center pin -->
+      <div class="co-mini-pin">
+        <svg viewBox="0 0 24 24">
+          <ellipse cx="12" cy="21" rx="4" ry="1.5" fill="rgba(0,0,0,0.18)"/>
+          <path fill="url(#pinGrad)" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+          <circle cx="12" cy="9" r="3" fill="white"/>
+          <circle cx="10.5" cy="7.5" r="1" fill="rgba(255,255,255,0.65)"/>
+        </svg>
+      </div>
+      <!-- Maximize button (top-left) -->
+      <button class="co-map-maximize-btn" onclick="openMapPicker()" title="Open full map">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+          <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+        </svg>
+      </button>
+      <!-- Location chip -->
+      <div class="co-map-live-chip" id="co-add-map-chip">
+        <span class="co-loc-dot"></span>
+        <span id="co-add-chip-text">Detecting location…</span>
+      </div>
+      <!-- GPS recenter -->
+      <button class="co-gps-btn" onclick="_coAddAddrGPS()" title="My Location">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+        </svg>
+      </button>
+      <!-- Zoom buttons -->
+      <div class="co-mini-zoom-btns">
+        <button class="co-mini-zoom-btn" onclick="if(_coAddAddrMap)_coAddAddrMap.zoomIn()">+</button>
+        <button class="co-mini-zoom-btn" onclick="if(_coAddAddrMap)_coAddAddrMap.zoomOut()">−</button>
+      </div>
+    </div>
+
+    <!-- Use Current Location button -->
+    <button class="co-use-gps-btn" onclick="_coAddAddrGPS()">
+      📍 Use Current Location
+    </button>
+
+    <!-- Drag instruction -->
+    <div class="co-map-drag-hint">Drag map to set exact location</div>
+
+    <!-- Form injected here by JS -->
+    <div class="co-sheet-body" id="co-add-addr-form-body" style="padding:0 16px 40px;"></div>
+
+  </div>
+</div><!-- /#co-add-addr-page -->
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PROFILE PANEL (Side Drawer)
+═══════════════════════════════════════════════════════════════ -->
+<div class="cart-overlay" id="profile-overlay" onclick="closeProfile()"></div>
+<div class="profile-panel" id="profile-panel">
+
+  <div class="profile-panel-header">
+    <div class="profile-panel-header-inner">
+      <button class="page-back-btn page-back-btn--header" onclick="closeProfile()" aria-label="Back">
+  <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+</button>
+      <span class="profile-panel-title">Profile</span>
+    </div>
+  </div>
+
+  <div class="profile-body">
+
+    <!-- User Info Row -->
+    <div class="profile-user-row">
+      <div class="profile-avatar" id="profile-avatar">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </div>
+      <div class="profile-user-info">
+        <div class="profile-header-name" id="profile-header-name">My Profile</div>
+        <div class="profile-panel-subtitle" id="profile-panel-subtitle">SabziBuddy Account</div>
+      </div>
+    </div>
+
+    <!-- My Orders -->
+    <button class="profile-link-btn" id="my-orders-toggle-btn" onclick="openOrdersPage()">
+      <span class="plb-left">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="20" height="20">
+          <defs><mask id="cut-mask"><rect width="100%" height="100%" fill="white"/><circle cx="320" cy="80" r="95" fill="black"/></mask></defs>
+          <path fill="#329537" mask="url(#cut-mask)" d="M24 48C10.7 48 0 58.7 0 72C0 85.3 10.7 96 24 96L69.3 96C73.2 96 76.5 98.8 77.2 102.6L129.3 388.9C135.5 423.1 165.3 448 200.1 448L456 448C469.3 448 480 437.3 480 424C480 410.7 469.3 400 456 400L200.1 400C188.5 400 178.6 391.7 176.5 380.3L171.4 352L475 352C505.8 352 532.2 330.1 537.9 299.8L568.9 133.9C572.6 114.2 557.5 96 537.4 96L124.7 96L124.3 94C119.5 67.4 96.3 48 69.2 48L24 48zM208 576C234.5 576 256 554.5 256 528C256 501.5 234.5 480 208 480C181.5 480 160 501.5 160 528C160 554.5 181.5 576 208 576zM432 576C458.5 576 480 554.5 480 528C480 501.5 458.5 480 432 480C405.5 480 384 501.5 384 528C384 554.5 405.5 576 432 576z"/>
+          <circle cx="320" cy="80" r="80" fill="#329537"/>
+          <path d="M270 85 L310 125 L370 65" fill="none" stroke="#ffffff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Your Orders
+      </span>
+      <span class="plb-arrow" id="my-orders-arrow">›</span>
+    </button>
+
+    <!-- Your Collections -->
+    <button class="profile-link-btn" onclick="openWishlistPage()">
+      <span class="plb-left"><span class="plb-icon">❤️</span> Your collections</span>
+      <div class="plb-right">
+        <span id="wish-count-badge" class="wish-count-badge">0</span>
+        <span class="plb-arrow">›</span>
+      </div>
+    </button>
+
+    <!-- Saved Address -->
+    <button class="profile-link-btn" onclick="openSavedAddress()">
+      <span class="plb-left">
+        <svg width="20" height="20" viewBox="0 0 24 24">
+          <ellipse cx="12" cy="21" rx="4" ry="1.5" fill="rgba(0,0,0,0.15)"/>
+          <path fill="url(#pinGrad)" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+          <circle cx="12" cy="9" r="3" fill="white"/>
+          <circle cx="10.5" cy="7.5" r="1" fill="rgba(255,255,255,0.6)"/>
+        </svg>
+        Address book
+      </span>
+      <span class="plb-arrow">›</span>
+    </button>
+
+    <!-- My Profile (Full Page) -->
+    <button class="profile-link-btn" onclick="openProfilePage()">
+      <span class="plb-left">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 640 640">
+          <path fill="rgb(50,149,55)" d="M470.5 463.6C451.4 416.9 405.5 384 352 384L288 384C234.5 384 188.6 416.9 169.5 463.6C133.9 426.3 112 375.7 112 320C112 205.1 205.1 112 320 112C434.9 112 528 205.1 528 320C528 375.7 506.1 426.2 470.5 463.6zM430.4 496.3C398.4 516.4 360.6 528 320 528C279.4 528 241.6 516.4 209.5 496.3C216.8 459.6 249.2 432 288 432L352 432C390.8 432 423.2 459.6 430.5 496.3zM320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM320 304C297.9 304 280 286.1 280 264C280 241.9 297.9 224 320 224C342.1 224 360 241.9 360 264C360 286.1 342.1 304 320 304zM232 264C232 312.6 271.4 352 320 352C368.6 352 408 312.6 408 264C408 215.4 368.6 176 320 176C271.4 176 232 215.4 232 264z"/>
+        </svg>
+        My Profile
+      </span>
+      <span class="plb-arrow">›</span>
+    </button>
+
+    <div class="profile-divider"></div>
+
+    <!-- Customer Support -->
+    <div class="profile-section"><div class="profile-section-label">Customer Support</div></div>
+
+    <button class="profile-link-btn" onclick="window.open('https://wa.me/917900684615?text=Hello%20SabziBuddy%2C%20I%20need%20help%20with%20my%20order')">
+      <span class="plb-left"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48">
+        <path fill="#fff" d="M4.9,43.3l2.7-9.8C5.9,30.6,5,27.3,5,24C5,13.5,13.5,5,24,5c5.1,0,9.8,2,13.4,5.6C41,14.2,43,18.9,43,24c0,10.5-8.5,19-19,19c0,0,0,0,0,0h0c-3.2,0-6.3-0.8-9.1-2.3L4.9,43.3z"/>
+        <path fill="#cfd8dc" d="M24,5c5.1,0,9.8,2,13.4,5.6C41,14.2,43,18.9,43,24c0,10.5-8.5,19-19,19h0c-3.2,0-6.3-0.8-9.1-2.3L4.9,43.3l2.7-9.8C5.9,30.6,5,27.3,5,24C5,13.5,13.5,5,24,5 M24,4L24,4C13,4,4,13,4,24c0,3.4,0.8,6.7,2.5,9.6L3.9,43c-0.1,0.3,0,0.7,0.3,1c0.2,0.2,0.4,0.3,0.7,0.3c0.1,0,0.2,0,0.3,0l9.7-2.5c2.8,1.5,6,2.2,9.2,2.2c11,0,20-9,20-20c0-5.3-2.1-10.4-5.8-14.1C34.4,6.1,29.4,4,24,4L24,4z"/>
+        <path fill="#40c351" d="M35.2,12.8c-3-3-6.9-4.6-11.2-4.6C15.3,8.2,8.2,15.3,8.2,24c0,3,0.8,5.9,2.4,8.4L11,33l-1.6,5.8l6-1.6l0.6,0.3c2.4,1.4,5.2,2.2,8,2.2h0c8.7,0,15.8-7.1,15.8-15.8C39.8,19.8,38.2,15.8,35.2,12.8z"/>
+        <path fill="#fff" fill-rule="evenodd" d="M19.3,16c-0.4-0.8-0.7-0.8-1.1-0.8c-0.3,0-0.6,0-0.9,0s-0.8,0.1-1.3,0.6c-0.4,0.5-1.7,1.6-1.7,4s1.7,4.6,1.9,4.9s3.3,5.3,8.1,7.2c4,1.6,4.8,1.3,5.7,1.2c0.9-0.1,2.8-1.1,3.2-2.3c0.4-1.1,0.4-2.1,0.3-2.3c-0.1-0.2-0.4-0.3-0.9-0.6s-2.8-1.4-3.2-1.5c-0.4-0.2-0.8-0.2-1.1,0.2c-0.3,0.5-1.2,1.5-1.5,1.9c-0.3,0.3-0.6,0.4-1,0.1c-0.5-0.2-2-0.7-3.8-2.4c-1.4-1.3-2.4-2.8-2.6-3.3c-0.3-0.5,0-0.7,0.2-1c0.2-0.2,0.5-0.6,0.7-0.8c0.2-0.3,0.3-0.5,0.5-0.8c0.2-0.3,0.1-0.6,0-0.8C20.6,19.3,19.7,17,19.3,16z" clip-rule="evenodd"/>
+      </svg>
+      Reach out to us on WhatsApp</span>
+    </button>
+
+    <button class="profile-link-btn profile-link-btn--col" onclick="window.open('tel:+917900684615')">
+      <span class="plb-left">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="20" height="20">
+          <path fill="rgb(50,149,55)" d="M224.2 89C216.3 70.1 195.7 60.1 176.1 65.4L170.6 66.9C106 84.5 50.8 147.1 66.9 223.3C104 398.3 241.7 536 416.7 573.1C493 589.3 555.5 534 573.1 469.4L574.6 463.9C580 444.2 569.9 423.6 551.1 415.8L453.8 375.3C437.3 368.4 418.2 373.2 406.8 387.1L368.2 434.3C297.9 399.4 241.3 341 208.8 269.3L253 233.3C266.9 222 271.6 202.9 264.8 186.3L224.2 89z"/>
+        </svg>
+        +91 7900684615
+      </span>
+      <span class="plb-hours">(9:00 AM to 6:00 PM Daily)</span>
+    </button>
+
+    <button class="profile-link-btn" onclick="window.location.href='mailto:support.sabzibuddy@gmail.com'">
+      <span class="plb-left"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="20" height="20">
+        <path fill="rgb(50,149,55)" d="M125.4 128C91.5 128 64 155.5 64 189.4C64 190.3 64 191.1 64.1 192L64 192L64 448C64 483.3 92.7 512 128 512L512 512C547.3 512 576 483.3 576 448L576 192L575.9 192C575.9 191.1 576 190.3 576 189.4C576 155.5 548.5 128 514.6 128L125.4 128zM528 256.3L528 448C528 456.8 520.8 464 512 464L128 464C119.2 464 112 456.8 112 448L112 256.3L266.8 373.7C298.2 397.6 341.7 397.6 373.2 373.7L528 256.3zM112 189.4C112 182 118 176 125.4 176L514.6 176C522 176 528 182 528 189.4C528 193.6 526 197.6 522.7 200.1L344.2 335.5C329.9 346.3 310.1 346.3 295.8 335.5L117.3 200.1C114 197.6 112 193.6 112 189.4z"/>
+      </svg>
+      support.sabzibuddy@gmail.com</span>
+    </button>
+
+    <div class="profile-divider"></div>
+
+    <!-- Extra Actions -->
+    <button class="profile-link-btn" onclick="shareWebsite()">
+      <span class="plb-left"><span class="plb-icon">🔗</span> Share the Website</span>
+      <span class="plb-arrow">›</span>
+    </button>
+    <button class="profile-link-btn" onclick="openAboutUs()">
+      <span class="plb-left"><span class="plb-icon">🌿</span> About Us</span>
+      <span class="plb-arrow">›</span>
+    </button>
+    <button class="profile-link-btn" onclick="openSuggestProduct()">
+      <span class="plb-left"><span class="plb-icon">💡</span> Suggest a Product</span>
+      <span class="plb-arrow">›</span>
+    </button>
+
+    <div class="profile-divider"></div>
+
+    <!-- Quick Links -->
+    <div class="profile-section"><div class="profile-section-label">Quick Links</div></div>
+
+    <button class="profile-link-btn" onclick="openLanguagePicker()">
+      <span class="plb-left"><span class="plb-icon">🌐</span> Language / भाषा</span>
+      <span id="current-lang-badge" class="lang-badge">EN</span>
+    </button>
+    <button class="profile-link-btn" onclick="openPrivacy()">
+      <span class="plb-left"><span class="plb-icon">🔒</span> Privacy Policy</span>
+      <span class="plb-arrow">›</span>
+    </button>
+    <button class="profile-link-btn" onclick="openTerms()">
+      <span class="plb-left"><span class="plb-icon">📄</span> Terms &amp; Conditions</span>
+      <span class="plb-arrow">›</span>
+    </button>
+
+    <div class="profile-divider"></div>
+
+    <!-- Logout -->
+    <div class="profile-logout-wrap">
+      <button id="profile-logout-btn" onclick="logoutUser()" class="profile-logout-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="18" height="18">
+          <path fill="currentColor" d="M352 64C352 46.3 337.7 32 320 32C302.3 32 288 46.3 288 64L288 320C288 337.7 302.3 352 320 352C337.7 352 352 337.7 352 320L352 64zM210.3 162.4C224.8 152.3 228.3 132.3 218.2 117.8C208.1 103.3 188.1 99.8 173.6 109.9C107.4 156.1 64 233 64 320C64 461.4 178.6 576 320 576C461.4 576 576 461.4 576 320C576 233 532.6 156.1 466.3 109.9C451.8 99.8 431.9 103.3 421.7 117.8C411.5 132.3 415.1 152.2 429.6 162.4C479.4 197.2 511.9 254.8 511.9 320C511.9 426 425.9 512 319.9 512C213.9 512 128 426 128 320C128 254.8 160.5 197.1 210.3 162.4z"/>
+        </svg>
+        Logout
+      </button>
+      <button id="profile-login-btn" onclick="closeProfile(); showLoginScreen();" class="profile-logout-btn" style="display:none; background: var(--green-dark, #1C3829); color: #fff;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="18" height="18">
+          <path fill="currentColor" d="M320 64a96 96 0 1 1 0 192A96 96 0 0 1 320 64zM160 384c0-53 43-96 96-96h128c53 0 96 43 96 96v16c0 17.7-14.3 32-32 32H192c-17.7 0-32-14.3-32-32v-16z"/>
+        </svg>
+        Login / Sign Up
+      </button>
+    </div>
+
+    <div class="profile-version">© 2026 &nbsp;•&nbsp; SabziBuddy v1.0.0</div>
+
+  </div><!-- /.profile-body -->
+</div><!-- /#profile-panel -->
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     THANK YOU OVERLAY
+═══════════════════════════════════════════════════════════════ -->
+<div class="thankyou-overlay" id="thankyou-overlay">
+  <div class="thankyou-card">
+    <div class="thankyou-icon">🥦</div>
+    <h2>Thank You for choosing SabziBuddy!</h2>
+    <p>Fresh Vegetables, Fast Delivery — right to your doorstep.</p>
+    <p class="thankyou-orderid-lbl">Your Order ID</p>
+    <div class="order-id-badge" id="thankyou-order-id">—</div>
+    <div class="thankyou-pin-box" id="thankyou-pin-box">
+      <div class="thankyou-pin-lbl">🔐 Your Delivery PIN</div>
+      <div class="thankyou-pin-num" id="thankyou-pin-num">—</div>
+      <div class="thankyou-pin-sub">Share this PIN with the delivery person to receive your order</div>
+    </div>
+    <button class="thankyou-close-btn" onclick="closeThankyou()">Continue Shopping 🛒</button>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     COUPON SUCCESS POPUP
+═══════════════════════════════════════════════════════════════ -->
+<div class="coupon-success-overlay" id="coupon-success-overlay" onclick="closeCouponSuccess()">
+  <div class="coupon-success-card" onclick="event.stopPropagation()">
+    <div class="cs-fireworks-zone">
+      <canvas class="cs-fireworks-canvas" id="cs-fw-canvas"></canvas>
+      <div class="cs-popup-emoji">🎉</div>
+      <div class="cs-awesome-txt">Awesome!</div>
+    </div>
+    <div class="cs-body">
+      <p class="cs-applied-label">You applied</p>
+      <div class="cs-code-pill">
+        <span>🎟️</span>
+        <span id="cs-code-text">CODE</span>
+      </div>
+      <p class="cs-saved-label">You saved</p>
+      <div class="cs-amount-row">
+        <span class="cs-rupee-sym">₹</span>
+        <span class="cs-big-num" id="cs-big-num">10</span>
+      </div>
+      <button class="cs-wohoo-btn" onclick="closeCouponSuccess()">Wohoo! Let's shop 🛒</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     FULL SCREEN PROFILE PAGE
+═══════════════════════════════════════════════════════════════ -->
+<div class="profile-page" id="profile-page">
+  <div class="pp-header">
+    <button class="page-back-btn page-back-btn--header" 
+  onclick="closeProfilePage()" aria-label="Back">
+  <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+</button>
+    <span class="pp-header-title">My Profile</span>
+    <div class="pp-header-spacer"></div>
+  </div>
+  <div class="pp-body" id="pp-body">
+    <div class="pp-avatar-wrap">
+      <div class="pp-avatar" id="pp-avatar-circle">👤</div>
+      <div class="pp-avatar-name" id="pp-display-name">Your Name</div>
+      <div class="pp-avatar-phone" id="pp-display-phone">+91 XXXXXXXXXX</div>
+    </div>
+    <div class="pp-card">
+      <div class="pp-card-title"><span>✏️</span> Edit Profile</div>
+      <div class="pp-msg" id="pp-form-msg"></div>
+      <div class="pp-field">
+        <label>👤 Full Name <span class="req-star">*</span></label>
+        <input type="text" id="pp-name" placeholder="Apna pura naam" maxlength="60"
+          oninput="updatePPAvatar()">
+      </div>
+      <div class="pp-field">
+        <label>📞 Mobile Number <span class="req-star">*</span></label>
+        <input type="tel" id="pp-phone" placeholder="9800012345" maxlength="10" readonly>
+        <div class="pp-readonly-note">🔒 Phone number cannot be changed</div>
+      </div>
+      <div class="pp-field">
+        <label>📧 Email Address <span class="optional-lbl">(Optional)</span></label>
+        <input type="email" id="pp-email" placeholder="yourname@email.com">
+      </div>
+      <button class="pp-save-btn" id="pp-save-btn" onclick="saveProfileData()">
+        ✅ Save Profile
+      </button>
+    </div>
+    <div class="pp-last-updated" id="pp-last-updated"></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     ORDERS FULL PAGE
+═══════════════════════════════════════════════════════════════ -->
+<div class="profile-page" id="orders-page">
+  <div class="pp-header">
+    <button class="page-back-btn page-back-btn--header" onclick="closeOrdersPage()" aria-label="Back">
+  <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+</button>
+    <span class="pp-header-title">📦 My Orders</span>
+    <div class="pp-header-spacer"></div>
+  </div>
+  <!-- pp-body acts as the scroll container; tab bar inside is sticky -->
+  <div class="pp-body" id="orders-page-body" style="padding:0;overflow-y:auto;">
+    <div class="pp-loading">
+      <div class="pp-spinner"></div>
+      Loading...
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     WISHLIST FULL PAGE
+═══════════════════════════════════════════════════════════════ -->
+<div class="profile-page" id="wishlist-page">
+  <div class="pp-header">
+    <button class="page-back-btn page-back-btn--header" onclick="closeWishlistPage()" aria-label="Back">
+  <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+</button>
+    <span class="pp-header-title">❤️ My Wishlist</span>
+    <div class="pp-header-spacer"></div>
+  </div>
+  <div class="pp-body" id="wishlist-page-body"></div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SAVED ADDRESS FULL PAGE
+═══════════════════════════════════════════════════════════════ -->
+<div class="profile-page" id="saved-addr-page">
+  <div class="pp-header">
+    <button class="page-back-btn page-back-btn--header" onclick="closeSavedAddrPage()" aria-label="Back">
+  <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+</button>
+    <span class="pp-header-title">📍 My Saved Details</span>
+    <div class="pp-header-spacer"></div>
+  </div>
+  <div class="pp-body" id="saved-addr-page-body"></div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PRODUCT DETAIL PAGE
+═══════════════════════════════════════════════════════════════ -->
+<div class="profile-page" id="product-detail-page">
+  <div class="pd-scroll" id="pd-scroll"></div>
+  <div class="pd-bottom-bar" id="pd-bottom-bar"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     LOCATION PERMISSION MODAL (First-time, Zepto style)
+═══════════════════════════════════════════════════════════════ -->
+<div id="loc-permission-modal" class="loc-modal-overlay" role="dialog" aria-modal="true">
+  <div class="loc-modal-sheet">
+    <div class="loc-modal-handle"></div>
+    <div class="loc-modal-header">
+      <span class="loc-modal-emoji">📍</span>
+      <h2 class="loc-modal-title">Aap kahan hain?</h2>
+      <p class="loc-modal-subtitle">Aapke paas ki fresh sabzi aur grocery<br>dhundhne ke liye location chahiye 🥦</p>
+    </div>
+    <div class="loc-modal-body">
+      <button id="loc-gps-btn" class="loc-gps-btn" onclick="locUseGPS()">
+        <span id="loc-gps-icon" class="loc-gps-icon">📍</span>
+        <span id="loc-gps-text" class="loc-gps-text">Use My Current Location</span>
+      </button>
+      <div class="loc-divider">ya manually search karein</div>
+      <div class="loc-search-wrap">
+        <div class="loc-search-input-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <circle cx="11" cy="11" r="7" stroke="#7A9186" stroke-width="2"/>
+            <path d="M16.5 16.5L21 21" stroke="#7A9186" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <input id="loc-search-input" type="text"
+            placeholder="Colony, mohalla ya area likhein..."
+            autocomplete="off" oninput="locOnSearchInput()"/>
+        </div>
+        <div id="loc-suggestions"></div>
+      </div>
+      <div id="loc-error-msg"></div>
+      <button class="loc-skip-btn" onclick="locSkip()">
+        Skip for now → Default location use karein
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MAP MODAL
+═══════════════════════════════════════════════════════════════ -->
+<div class="map-modal" id="map-modal">
+  <div class="map-header">
+    <button class="page-back-btn page-back-btn--header" onclick="closeMapPicker()" aria-label="Back">
+  <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+</button>
+    <svg width="22" height="22" viewBox="0 0 24 24">
+      <ellipse cx="12" cy="21" rx="4" ry="1.5" fill="rgba(255,255,255,0.2)"/>
+      <path fill="url(#pinGrad)" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+      <circle cx="12" cy="9" r="3" fill="white"/>
+      <circle cx="10.5" cy="7.5" r="1" fill="rgba(255,255,255,0.7)"/>
+    </svg>
+    <span class="map-header-title">Select Your Delivery Location</span>
+  </div>
+
+  <div class="map-search-outer">
+    <div class="map-search-inner">
+      <svg class="search-icon-svg" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" class="map-search-bar" id="map-search-input"
+        placeholder="Colony, area, landmark or pincode..." autocomplete="off">
+      <button class="clear-btn" id="map-clear-btn" onclick="clearMapSearch()" title="Clear">×</button>
+      <button class="voice-btn" id="map-voice-btn" onclick="startMapVoiceSearch()" title="Voice Search">
+        <svg viewBox="0 0 24 24">
+          <rect x="9" y="2" width="6" height="12" rx="3"/>
+          <path d="M5 10a7 7 0 0014 0"/>
+          <line x1="12" y1="22" x2="12" y2="17"/>
+        </svg>
+      </button>
+      <button type="button" class="map-search-btn" onclick="triggerMapSearch()">Search</button>
+    </div>
+    <div id="photon-suggestions"></div>
+  </div>
+
+  <div class="map-container">
+    <div id="leaflet-map"></div>
+    <div class="map-center-pin">
+      <div class="delivery-tooltip">Delivering here<br><small>Drag map to adjust the pin</small></div>
+      <svg width="52" height="52" viewBox="0 0 24 24" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.38))">
+        <ellipse cx="12" cy="21" rx="4" ry="1.5" fill="rgba(0,0,0,0.22)"/>
+        <path fill="url(#pinGrad)" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+        <circle cx="12" cy="9" r="3" fill="white"/>
+        <circle cx="10.5" cy="7.5" r="1" fill="rgba(255,255,255,0.65)"/>
+      </svg>
+    </div>
+    <div class="map-zoom-btns">
+      <button class="zoom-btn" onclick="mapZoom(1)">+</button>
+      <button class="zoom-btn" onclick="mapZoom(-1)">−</button>
+    </div>
+    <button class="gps-fab" onclick="recenterGPS()">
+      <svg viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="map-bottom">
+    <div class="map-addr-row">
+      <svg width="34" height="34" viewBox="0 0 24 24" style="flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.18))">
+        <ellipse cx="12" cy="21" rx="4" ry="1.5" fill="rgba(0,0,0,0.15)"/>
+        <path fill="url(#pinGrad)" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+        <circle cx="12" cy="9" r="3" fill="white"/>
+        <circle cx="10.5" cy="7.5" r="1" fill="rgba(255,255,255,0.6)"/>
+      </svg>
+      <div class="map-addr-text">
+        <div class="map-area-name" id="map-area-name">Select your location...</div>
+        <div class="map-full-addr" id="map-full-addr"></div>
+        <div class="map-coords" id="map-coords"></div>
+      </div>
+    </div>
+    <button class="confirm-loc-btn" id="confirm-loc-btn" onclick="confirmLocation()" disabled>
+      ✅ Confirm This Location
+    </button>
+  </div>
+</div><!-- /#map-modal -->
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     NO SERVICE AREA OVERLAY
+═══════════════════════════════════════════════════════════════ -->
+<div class="no-service-overlay" id="no-service-overlay">
+  <div class="no-service-sheet" onclick="event.stopPropagation()">
+    <div class="no-service-icon">😔</div>
+    <h3>We don't deliver here yet</h3>
+    <p>SabziBuddy currently delivers only within <strong>Firozabad</strong> city limits. We're expanding soon!<br><br>Please select a location within Firozabad.</p>
+    <button class="no-service-btn"
+      onclick="document.getElementById('no-service-overlay').classList.remove('open')">
+      Got it, Try Again
+    </button>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     ALL COUPONS MODAL
+═══════════════════════════════════════════════════════════════ -->
+<div class="legal-overlay" id="coupons-overlay" onclick="closeAllCoupons()">
+  <div class="legal-sheet" onclick="event.stopPropagation()">
+    <div class="legal-header">
+      <h3>🎟️ Active Coupons</h3>
+      <button class="legal-close" onclick="closeAllCoupons()">✕</button>
+    </div>
+    <div class="legal-body" id="all-coupons-body">
+      <div class="modal-loading">
+        <div class="modal-spinner"></div>
+        Loading coupons...
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     LANGUAGE PICKER MODAL
+═══════════════════════════════════════════════════════════════ -->
+<div class="legal-overlay" id="lang-overlay" onclick="closeLanguagePicker()">
+  <div class="legal-sheet legal-sheet--sm" onclick="event.stopPropagation()">
+    <div class="legal-header">
+      <h3>🌐 Language / भाषा</h3>
+      <button class="legal-close" onclick="closeLanguagePicker()">✕</button>
+    </div>
+    <div class="legal-body lang-list">
+      <button onclick="setLanguage('en')" class="lang-option">
+        <span>🇬🇧 &nbsp;English</span>
+        <span id="lang-en-check" class="lang-check">✓</span>
+      </button>
+      <button onclick="setLanguage('hi')" class="lang-option">
+        <span>🇮🇳 &nbsp;हिंदी (Hindi)</span>
+        <span id="lang-hi-check" class="lang-check hidden">✓</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PRIVACY POLICY MODAL
+═══════════════════════════════════════════════════════════════ -->
+<div class="legal-overlay" id="privacy-overlay" onclick="closePrivacy()">
+  <div class="legal-sheet" onclick="event.stopPropagation()">
+    <div class="legal-header">
+      <h3>🔒 Privacy Policy</h3>
+      <button class="legal-close" onclick="closePrivacy()">✕</button>
+    </div>
+    <div class="legal-body">
+      <p class="legal-date">Last updated: April 2026 | SabziBuddy</p>
+      <h4>1. Information We Collect</h4>
+      <p>We collect only what is necessary: Name, Phone Number, Delivery Address &amp; Location.</p>
+      <h4>2. How We Use Your Information</h4>
+      <p>Your information is used only to process and deliver your orders.</p>
+      <h4>3. Data Sharing</h4>
+      <p>We do NOT sell, trade, or share your personal information with any third parties.</p>
+      <h4>4. Data Security</h4>
+      <p>We take reasonable steps to protect your personal data.</p>
+      <h4>5. Contact Us</h4>
+      <p>📞 +91 7900684615 &nbsp;|&nbsp; 📧 support.sabzibuddy@gmail.com</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     TERMS & CONDITIONS MODAL
+═══════════════════════════════════════════════════════════════ -->
+<div class="legal-overlay" id="terms-overlay" onclick="closeTerms()">
+  <div class="legal-sheet" onclick="event.stopPropagation()">
+    <div class="legal-header">
+      <h3>📄 Terms &amp; Conditions</h3>
+      <button class="legal-close" onclick="closeTerms()">✕</button>
+    </div>
+    <div class="legal-body">
+      <p class="legal-date">Last updated: April 2026 | SabziBuddy</p>
+      <h4>1. Use of Service</h4>
+      <p>By using our website, you agree to provide accurate details.</p>
+      <h4>2. Orders</h4>
+      <ul>
+        <li>All orders are subject to availability</li>
+        <li>We may cancel or modify orders if required</li>
+      </ul>
+      <h4>3. Pricing</h4>
+      <p>Prices may vary based on market conditions.</p>
+      <h4>4. Delivery</h4>
+      <p>We currently deliver within Firozabad only.</p>
+      <h4>5. Payments</h4>
+      <p>Cash / UPI / QR. Orders processed after WhatsApp confirmation.</p>
+      <h4>6. Contact Us</h4>
+      <p>📞 +91 7900684615 &nbsp;|&nbsp; 📧 support.sabzibuddy@gmail.com</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONTENT POLICY MODAL
+═══════════════════════════════════════════════════════════════ -->
+<div class="legal-overlay" id="content-overlay" onclick="closeModal('content-overlay')">
+  <div class="legal-sheet" onclick="event.stopPropagation()">
+    <div class="legal-header">
+      <h3>📝 Content &amp; Guidelines Policy</h3>
+      <button class="legal-close" onclick="closeModal('content-overlay')">✕</button>
+    </div>
+    <div class="legal-body">
+      <p class="legal-date">Last updated: April 2026 | Tastio</p>
+      <h4>1. Reviews &amp; Ratings</h4>
+      <p>We encourage you to share honest feedback about products and delivery — your reviews help other customers make informed decisions.</p>
+      <h4>2. Prohibited Content</h4>
+      <ul>
+        <li>Abusive, hateful or discriminatory language</li>
+        <li>Spam, fake reviews or promotional content</li>
+        <li>Personal information about other users</li>
+      </ul>
+      <h4>3. Moderation</h4>
+      <p>We may edit or remove any content that violates these guidelines without prior notice.</p>
+      <h4>4. Contact Us</h4>
+      <p>📞 +91 7900684615 &nbsp;|&nbsp; 📧 support.sabzibuddy@gmail.com</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     CATEGORY SPLIT-VIEW PAGE
+═══════════════════════════════════════════════════════════════ -->
+<div id="category-page">
+  <div class="cp-header">
+    <button class="cp-back-btn" onclick="closeCategoryPage()" aria-label="Back">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+    <span class="cp-header-title">Categories</span>
+    <span class="cp-header-count" id="cp-count"></span>
+  </div>
+  <div class="cp-body">
+    <div id="cp-cats"></div>
+    <div id="cp-products"></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     BOTTOM NAVIGATION BAR
+═══════════════════════════════════════════════════════════════ -->
+<nav class="bottom-nav">
+  <button class="bnav-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--g2)">
+      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+    </svg>
+    Home
+  </button>
+  <button class="bnav-btn bnav-btn--muted" onclick="openCategoryPage()">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--tmut)" stroke-width="2" stroke-linecap="round">
+      <rect x="3" y="3" width="7" height="7" rx="1"/>
+      <rect x="14" y="3" width="7" height="7" rx="1"/>
+      <rect x="3" y="14" width="7" height="7" rx="1"/>
+      <rect x="14" y="14" width="7" height="7" rx="1"/>
+    </svg>
+    Categories
+  </button>
+  <button class="bnav-btn bnav-btn--muted bnav-btn--dot" onclick="openAllCoupons()">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--tmut)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+      <circle cx="7" cy="7" r="1.5" fill="var(--tmut)"/>
+    </svg>
+    Offers
+  </button>
+  <button class="bnav-btn bnav-btn--muted" onclick="openOrdersPage()">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--tmut)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <path d="M16 10a4 4 0 01-8 0"/>
+    </svg>
+    Orders
+  </button>
+  <button class="bnav-btn bnav-btn--muted" onclick="openProfile()">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--tmut)" stroke-width="2" stroke-linecap="round">
+      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+      <circle cx="12" cy="7" r="4"/>
+    </svg>
+    Account
+  </button>
+</nav>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     EXTERNAL LIBRARIES (body ke end mein — faster parse)
+═══════════════════════════════════════════════════════════════ -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-functions-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check-compat.js"></script>
+
+<!-- ═══════════════════════════════════════════════════════════
+     APP SCRIPTS — new folder structure, load order matters!
+═══════════════════════════════════════════════════════════════ -->
+
+<!-- 1. CORE (no dependencies) -->
+<script src="js/core/constants.js"></script>
+<script src="js/core/state.js"></script>
+<script src="js/core/storage.js"></script>
+<script src="js/core/validators.js"></script>
+<script src="js/core/utils.js"></script>
+<script src="js/core/error.js"></script>
+<script src="js/core/config.js"></script>
+
+<!-- 2. UI (depends on core) -->
+<script src="js/ui/toast.js"></script>
+<script src="js/ui/modal.js"></script>
+<script src="js/ui/validation.js"></script>
+<script src="js/ui/auth-ui.js"></script>
+<script src="js/ui/i18n.js"></script>
+<script src="js/ui/category.js"></script>
+<script src="js/ui/category-page.js"></script>
+<script src="js/ui/cart-ui.js"></script>
+<script src="js/ui/celebration.js"></script>
+
+<!-- 3. MODULES (depends on core + ui) -->
+<script src="js/modules/auth.js"></script>
+<script src="js/modules/social-auth.js"></script>
+<script src="js/modules/rating-badge.js"></script>
+<script src="js/modules/products.js"></script>
+<script src="js/modules/product-carousel.js"></script>
+<script src="js/modules/product-detail.js"></script>
+<script src="js/modules/wishlist.js"></script>
+<script src="js/modules/notifications.js"></script>
+<script src="js/modules/cart.js"></script>
+<script src="js/modules/coupon.js"></script>
+<script src="js/modules/slots.js"></script>
+<script src="js/modules/location.js"></script>
+<script src="js/modules/map.js"></script>
+<script src="js/modules/order.js"></script>
+<script src="js/modules/order-history.js"></script>
+<script src="js/modules/order-history-map.js"></script>
+<script src="js/modules/profile.js"></script>
+<script src="js/modules/address-book.js"></script>
+<script src="js/modules/checkout-address.js"></script>
+<script src="js/modules/share.js"></script>
+<script src="js/modules/search.js"></script>
+
+
+<!-- 4. HANDLERS -->
+<script src="js/modules/recently-viewed.js"></script>
+<script src="js/modules/home-sections.js"></script>
+<script src="js/modules/buy-again.js"></script>
+<script src="js/modules/flash-deal.js"></script>
+<script src="js/handlers/backhandler.js"></script> 
+<script src="js/handlers/network.js"></script>
+
+<!-- Premium collapsing header (Swiggy/Zomato style scroll animation) -->
+<script src="js/modules/header-scroll.js"></script>
+
+<!-- 5. INIT — ALWAYS LAST -->
+<script src="js/init.js"></script>
+
+<!-- ₹1 Zone icon: lightweight Lottie animation (autoplay + loop, transparent bg,
+     play/pause driven by viewport visibility for performance) -->
+<script src="js/vendor/lottie.min.js" defer></script>
+<script>
+(function () {
+  function initZoneLottie() {
+    var el = document.getElementById('zone-lottie');
+    if (!el || typeof lottie === 'undefined') return;
+
+    var anim = lottie.loadAnimation({
+      container: el,
+      renderer: 'svg',
+      loop: true,
+      autoplay: false,
+      path: 'assets/lottie/bestoffers.json',
+      rendererSettings: { preserveAspectRatio: 'xMidYMid meet' }
+    });
+
+    if (typeof IntersectionObserver === 'undefined') {
+      // Fallback: no IO support, just autoplay/loop as before
+      anim.loop = true;
+      anim.play();
+      return;
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          anim.play();
+        } else {
+          anim.pause();
+        }
+      });
+    }, { threshold: 0.1 });
+
+    io.observe(el);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () {
+      window.addEventListener('load', initZoneLottie);
+    });
+  } else {
+    window.addEventListener('load', initZoneLottie);
+  }
+})();
+</script>
+
+</body>
+</html>

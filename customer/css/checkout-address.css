@@ -1,0 +1,893 @@
+/* ============================================================
+   CHECKOUT ADDRESS — SabziBuddy
+   FreshCart-style: steps indicator, mini-map, saved address
+   cards, add-address bottom sheet with full form
+   ============================================================ */
+
+/* ── CHECKOUT STEPS INDICATOR ─────────────────────────────── */
+.co-steps {
+  display: flex;
+  align-items: center;
+  padding: 14px 20px 10px;
+  background: #fff;
+  border-bottom: 1px solid var(--cream2);
+  flex-shrink: 0;
+}
+
+.co-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+  opacity: 0.35;
+  transition: opacity var(--t-base) var(--ease);
+}
+.co-step.active  { opacity: 1; }
+.co-step.done    { opacity: 0.75; }
+
+.co-step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--cream2);
+  color: var(--tmut);
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--t-base), color var(--t-base);
+}
+.co-step.active .co-step-dot {
+  background: var(--g2);
+  color: #fff;
+}
+.co-step.done .co-step-dot {
+  background: var(--g4);
+  color: #fff;
+}
+.co-step.done .co-step-dot::before {
+  content: '✓';
+}
+
+.co-step > span {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--tmut);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+.co-step.active > span { color: var(--g2); }
+
+.co-step-line {
+  flex: 1;
+  height: 2px;
+  background: var(--cream2);
+  margin: 0 6px;
+  margin-top: -18px;
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+.co-step-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--g4);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease);
+}
+.co-step-line.filled::after { transform: scaleX(1); }
+
+
+/* ── STEP SECTIONS ──────────────────────────────────────────── */
+.co-step-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.co-step-section.hidden {
+  display: none !important;
+}
+
+
+/* ── MINI MAP (checkout address step) ─────────────────────── */
+.co-mini-map-wrap {
+  position: relative;
+  height: 200px;
+  border-radius: 0 0 20px 20px;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(28,56,41,0.12);
+}
+
+#co-mini-map {
+  width: 100%;
+  height: 100%;
+  touch-action: pan-x pan-y pinch-zoom;
+}
+
+/* Center crosshair pin over mini-map */
+.co-mini-pin {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  z-index: 401;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.co-mini-pin svg {
+  filter: drop-shadow(0 3px 8px rgba(0,0,0,0.3));
+  width: 36px;
+  height: 36px;
+}
+
+/* "Live Location" chip at bottom of mini map */
+.co-map-live-chip {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 402;
+  background: rgba(28,56,41,0.88);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  backdrop-filter: blur(4px);
+  max-width: 85%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.co-map-live-chip .co-loc-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #6BBF7B;
+  flex-shrink: 0;
+  animation: pulseDot 1.6s ease-in-out infinite;
+}
+@keyframes pulseDot {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.5; transform: scale(1.4); }
+}
+
+/* GPS recenter button on mini map */
+.co-gps-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 402;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  transition: transform var(--t-fast);
+}
+.co-gps-btn:active { transform: scale(0.92); }
+.co-gps-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: var(--g2);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+
+/* ── SELECT ADDRESS SECTION ──────────────────────────────── */
+.co-section-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--cream2);
+}
+
+.co-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.co-section-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--g4);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.co-addr-empty {
+  text-align: center;
+  padding: 24px 16px;
+  color: var(--tmut);
+  font-size: 13px;
+}
+.co-addr-empty .empty-icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* ── SAVED ADDRESS CARD ───────────────────────────────────── */
+.co-addr-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 13px 14px;
+  border: 2px solid var(--cream2);
+  border-radius: 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: border-color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
+  position: relative;
+  background: #fff;
+}
+.co-addr-card:last-of-type { margin-bottom: 0; }
+
+.co-addr-card.selected {
+  border-color: var(--g4);
+  background: rgba(74,139,92,0.04);
+  box-shadow: 0 0 0 3px rgba(74,139,92,0.12);
+}
+.co-addr-card:active { transform: scale(0.99); }
+
+/* Radio dot */
+.co-addr-radio {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--cream2);
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color var(--t-fast);
+}
+.co-addr-card.selected .co-addr-radio {
+  border-color: var(--g2);
+}
+.co-addr-radio-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--g2);
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity var(--t-fast), transform var(--t-fast);
+}
+.co-addr-card.selected .co-addr-radio-dot {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Address content */
+.co-addr-body { flex: 1; min-width: 0; }
+
+.co-addr-top {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 5px;
+  flex-wrap: wrap;
+}
+
+.co-addr-type-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--cream);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--g2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.co-addr-default-badge {
+  font-size: 9px;
+  background: var(--g2);
+  color: #fff;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-weight: 700;
+}
+
+.co-addr-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--td);
+  margin-bottom: 3px;
+}
+
+.co-addr-line {
+  font-size: 12px;
+  color: var(--tmut);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.co-addr-phone {
+  font-size: 11px;
+  color: var(--g4);
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+/* Action buttons */
+.co-addr-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.co-addr-act-btn {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--g4);
+  background: var(--cream);
+  border: 1px solid var(--cream2);
+  border-radius: 6px;
+  padding: 3px 9px;
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.co-addr-act-btn:hover { background: var(--cream2); }
+.co-addr-act-btn.danger { color: #c0392b; }
+.co-addr-act-btn.danger:hover { background: #fee; border-color: #fcc; }
+
+
+/* ── ADD ADDRESS BUTTON ───────────────────────────────────── */
+.co-add-addr-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 16px;
+  margin-top: 12px;
+  background: transparent;
+  border: 2px dashed var(--g4);
+  border-radius: 12px;
+  color: var(--g3);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.co-add-addr-btn:hover {
+  background: rgba(74,139,92,0.06);
+  border-color: var(--g3);
+}
+.co-add-addr-btn:active { transform: scale(0.98); }
+.co-add-addr-btn i { font-size: 15px; }
+
+
+/* ── CONTINUE BUTTON ─────────────────────────────────────── */
+.co-continue-btn {
+  width: 100%;
+  padding: 16px;
+  background: var(--g2);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--t-fast), transform var(--t-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  letter-spacing: 0.3px;
+}
+.co-continue-btn:hover:not(:disabled) {
+  background: var(--g3);
+  transform: translateY(-1px);
+}
+.co-continue-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+.co-continue-btn .btn-arrow { font-size: 18px; }
+
+
+/* ── SLOT STEP ─────────────────────────────────────────────── */
+.co-slot-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--td);
+  margin: 0 0 4px;
+}
+.co-slot-sub {
+  font-size: 13px;
+  color: var(--tmut);
+  margin: 0 0 0;
+}
+
+
+/* ── ADD ADDRESS BOTTOM SHEET ─────────────────────────────── */
+.co-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 100000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t-base) var(--ease);
+  backdrop-filter: blur(2px);
+}
+.co-sheet-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.co-addr-sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 100001;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform var(--t-slow) var(--ease);
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.18);
+}
+.co-addr-sheet.open {
+  transform: translateY(0);
+}
+
+/* Sheet handle */
+.co-sheet-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--cream2);
+  border-radius: 2px;
+  margin: 12px auto 0;
+  flex-shrink: 0;
+}
+
+.co-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px 12px;
+  border-bottom: 1px solid var(--cream2);
+  flex-shrink: 0;
+}
+.co-sheet-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--td);
+}
+.co-sheet-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--tm);
+  transition: background var(--t-fast);
+}
+.co-sheet-close:hover { background: var(--cream2); }
+
+/* Location confirmation chip in sheet */
+.co-sheet-loc-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(74,139,92,0.08);
+  border: 1px solid rgba(74,139,92,0.2);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin: 12px 16px 0;
+  flex-shrink: 0;
+}
+.co-sheet-loc-chip svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: var(--g2);
+  stroke-width: 2;
+  stroke-linecap: round;
+  flex-shrink: 0;
+}
+.co-sheet-loc-text {
+  flex: 1;
+  min-width: 0;
+}
+.co-sheet-loc-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--g2);
+  margin-bottom: 1px;
+}
+.co-sheet-loc-addr {
+  font-size: 11px;
+  color: var(--tmut);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Sheet scroll body */
+.co-sheet-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 16px 24px;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Form groups in sheet */
+.co-form-row {
+  display: flex;
+  gap: 10px;
+}
+.co-form-row .co-fg { flex: 1; }
+
+.co-fg {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 14px;
+}
+.co-fg:last-child { margin-bottom: 0; }
+
+.co-fg label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--td);
+  margin-bottom: 6px;
+}
+
+.co-fg input[type="text"],
+.co-fg input[type="tel"] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 13px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  color: var(--td);
+  background: var(--cream);
+  border: 1.5px solid var(--cream2);
+  border-radius: 10px;
+  outline: none;
+  -webkit-appearance: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+.co-fg input:focus {
+  border-color: var(--g4);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(74,139,92,0.12);
+}
+.co-fg input::placeholder { color: var(--tmut); font-size: 13px; }
+
+.co-phone-wrap {
+  display: flex;
+  align-items: stretch;
+  background: var(--cream);
+  border: 1.5px solid var(--cream2);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.co-phone-wrap:focus-within {
+  border-color: var(--g4);
+  box-shadow: 0 0 0 3px rgba(74,139,92,0.12);
+  background: #fff;
+}
+.co-phone-prefix {
+  padding: 11px 10px 11px 13px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--g2);
+  background: transparent;
+  border-right: 1.5px solid var(--cream2);
+  white-space: nowrap;
+}
+.co-phone-wrap input {
+  flex: 1;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  padding-left: 10px !important;
+}
+
+.co-req { color: var(--terra); font-size: 13px; }
+.co-opt { font-size: 11px; font-weight: 400; color: var(--tmut); }
+
+/* Address type selector */
+.co-type-selector {
+  display: flex;
+  gap: 8px;
+}
+.co-type-option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px;
+  border: 2px solid var(--cream2);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color var(--t-fast), background var(--t-fast);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--tmut);
+}
+.co-type-option input { display: none; }
+.co-type-option i { font-size: 18px; }
+.co-type-option.active {
+  border-color: var(--g2);
+  background: rgba(28,56,41,0.05);
+  color: var(--g2);
+}
+
+/* Default checkbox in sheet */
+.co-default-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 4px 0;
+}
+.co-default-check input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--g2);
+  cursor: pointer;
+}
+.co-default-check span {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tm);
+}
+
+/* Save address button */
+.co-save-addr-btn {
+  width: 100%;
+  padding: 15px;
+  background: var(--g2);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 18px;
+  transition: background var(--t-fast), transform var(--t-fast);
+}
+.co-save-addr-btn:hover { background: var(--g3); transform: translateY(-1px); }
+.co-save-addr-btn:active { transform: scale(0.98); }
+.co-save-addr-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  background: var(--g2);
+}
+
+.co-field-err {
+  font-size: 11px;
+  color: #c0392b;
+  margin-top: 4px;
+  min-height: 0;
+  font-weight: 600;
+}
+
+/* ══════════════════════════════════════════════════════════
+   NEW ADDITIONS: Maximize btn, zoom btns, + icon, pincode
+   ══════════════════════════════════════════════════════════ */
+
+/* ── MINI MAP: Maximize button (top-left) ─────────────── */
+.co-map-maximize-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 402;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.22);
+  transition: transform var(--t-fast), box-shadow var(--t-fast);
+}
+.co-map-maximize-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.28);
+}
+.co-map-maximize-btn:active { transform: scale(0.92); }
+.co-map-maximize-btn svg {
+  width: 16px;
+  height: 16px;
+  color: var(--g2);
+}
+
+/* ── MINI MAP: Zoom buttons (bottom-left) ─────────────── */
+.co-mini-zoom-btns {
+  position: absolute;
+  bottom: 40px;
+  left: 10px;
+  z-index: 402;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.co-mini-zoom-btn {
+  width: 30px;
+  height: 30px;
+  background: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--g2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  line-height: 1;
+  transition: background var(--t-fast);
+}
+.co-mini-zoom-btn:hover { background: var(--cream); }
+.co-mini-zoom-btn:active { transform: scale(0.9); }
+
+/* ── ADD NEW ADDRESS: + text icon ─────────────────────── */
+.co-add-plus {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: var(--g2);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: transform var(--t-fast);
+}
+.co-add-addr-btn:hover .co-add-plus {
+  transform: rotate(90deg);
+}
+
+/* ── PINCODE AUTO-FILL ────────────────────────────────── */
+.co-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.co-input-wrap input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Loader spinner */
+.co-pincode-loader {
+  position: absolute;
+  right: 10px;
+  color: var(--g4);
+  font-size: 16px;
+  animation: co-spin 0.8s linear infinite;
+  pointer-events: none;
+}
+@keyframes co-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Auto-filled green tag */
+.co-pincode-autofill-tag {
+  font-size: 11px;
+  color: var(--g4);
+  font-weight: 700;
+  margin-top: 4px;
+  padding: 2px 8px;
+  background: rgba(74,139,92,0.1);
+  border-radius: 6px;
+  display: inline-block;
+}
+
+/* Flash animation on auto-filled fields */
+@keyframes co-autofill-flash {
+  0%   { border-color: var(--g4); background: rgba(74,139,92,0.08); }
+  100% { border-color: var(--cream2); background: var(--cream); }
+}
+.co-fg input.co-autofilled {
+  animation: co-autofill-flash 1.8s ease forwards;
+  border-color: var(--g4);
+  box-shadow: 0 0 0 3px rgba(74,139,92,0.15);
+}
+
+/* ── ADD ADDRESS FULL PAGE ──────────────────────────────────── */
+.co-add-addr-scroll {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--cream);
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.co-add-map-wrap {
+  position: relative;
+  height: 260px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+#co-add-map {
+  width: 100%;
+  height: 100%;
+  touch-action: pan-x pan-y pinch-zoom;
+}
+
+.co-use-gps-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: calc(100% - 32px);
+  margin: 12px 16px 0;
+  padding: 13px;
+  background: var(--g2);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  transition: background 0.2s;
+}
+.co-use-gps-btn:active { background: var(--g1); transform: scale(0.98); }
+
+.co-map-drag-hint {
+  text-align: center;
+  font-size: 12px;
+  color: var(--tmut);
+  padding: 6px 0 12px;
+}

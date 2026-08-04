@@ -1,0 +1,251 @@
+/* ============================================================
+   MAP — SabziBuddy
+   Full-screen map modal: header, search, Leaflet canvas,
+   center pin, zoom controls, GPS FAB, bottom confirm bar
+   Duplicates removed:
+     no-service-overlay/sheet/btn → components/modal.css
+     .clear-btn                   → modules/search.css
+   ============================================================ */
+
+/* ── MAP MODAL (full screen) ─────────────────────────────── */
+.map-modal {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);   /* 500 — above content */
+  display: none;
+  flex-direction: column;
+  background: #fff;
+}
+.map-modal.open { display: flex; }
+
+/* ── MAP HEADER ──────────────────────────────────────────── */
+.map-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  background: var(--g2);
+  flex-shrink: 0;
+}
+
+.map-back-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  border: none; cursor: pointer;
+  font-size: 20px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  transition: background var(--t-fast) var(--ease);
+}
+.map-back-btn:hover { background: rgba(255, 255, 255, 0.28); }
+
+.map-header-title {
+  font-weight: 600; font-size: 15px; color: #fff;
+}
+
+/* ── MAP SEARCH BAR ──────────────────────────────────────── */
+.map-search-outer {
+  padding: 8px 12px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  flex-shrink: 0;
+  position: relative;     /* photon suggestions absolutely positioned here */
+}
+
+.map-search-inner {
+  display: flex; align-items: center; gap: 4px;
+  background: var(--cream);
+  border: 1.5px solid var(--cream2);
+  border-radius: 50px;
+  padding: 4px 6px 4px 14px;
+  transition: border-color var(--t-fast) var(--ease),
+              background   var(--t-fast) var(--ease);
+}
+.map-search-inner:focus-within {
+  border-color: var(--g4);
+  background: #fff;
+}
+
+.map-search-bar {
+  flex: 1; min-width: 0;
+  border: none; background: transparent;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px; color: var(--td);
+  outline: none; padding: 8px 4px;
+}
+.map-search-bar::placeholder { color: var(--tmut); }
+
+.map-search-btn {
+  flex-shrink: 0;
+  background: var(--g2); color: #fff;
+  border: none; border-radius: 22px;
+  padding: 8px 16px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  white-space: nowrap; line-height: 1;
+  transition: background var(--t-fast) var(--ease);
+}
+.map-search-btn:hover { background: var(--g3); }
+
+/* ── PHOTON SUGGESTIONS DROPDOWN ─────────────────────────── */
+#photon-suggestions {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 12px; right: 12px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  z-index: calc(var(--z-overlay) + 100);  /* above map canvas */
+  display: none;
+  max-height: 300px; overflow-y: auto;
+  border: 1px solid var(--cream2);
+  scrollbar-width: thin;
+  scrollbar-color: var(--cream2) transparent;
+}
+
+.photon-item {
+  padding: 11px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--cream);
+  transition: background var(--t-fast);
+  line-height: 1.4;
+}
+.photon-item:last-child { border-bottom: none; }
+.photon-item:hover,
+.photon-item:active { background: var(--cream); }
+
+.photon-item-main {
+  font-size: 13px; font-weight: 600; color: var(--td);
+  display: flex; align-items: center; gap: 6px;
+}
+.photon-item-sub {
+  font-size: 11px; color: var(--tmut); margin-top: 2px;
+}
+
+/* ── MAP CONTAINER ───────────────────────────────────────── */
+.map-container {
+  flex: 1; position: relative; overflow: hidden;
+}
+
+#leaflet-map {
+  width: 100%; height: 100%;
+  /* PRO: proper touch handling for map gestures on mobile   */
+  touch-action: pan-x pan-y pinch-zoom;
+}
+
+/* ── CENTER PIN + TOOLTIP ────────────────────────────────── */
+.map-center-pin {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -92%);
+  z-index: calc(var(--z-overlay) - 1);  /* 499 — inside map */
+  pointer-events: none;
+  display: flex; flex-direction: column; align-items: center;
+}
+
+.delivery-tooltip {
+  background: rgba(15, 15, 15, 0.88);
+  color: #fff;
+  padding: 9px 14px; border-radius: 10px;
+  font-size: 12px; font-weight: 600;
+  text-align: center; margin-bottom: 6px;
+  max-width: 200px; line-height: 1.4;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  position: relative;
+}
+
+/* Speech bubble triangle */
+.delivery-tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: -7px; left: 50%;
+  transform: translateX(-50%);
+  border: 7px solid transparent;
+  border-top-color: rgba(15, 15, 15, 0.88);
+  border-bottom: none;
+}
+
+/* ── ZOOM BUTTONS ────────────────────────────────────────── */
+.map-zoom-btns {
+  position: absolute;
+  right: 12px; top: 12px;
+  z-index: calc(var(--z-overlay) + 50);
+  display: flex; flex-direction: column; gap: 4px;
+}
+
+.zoom-btn {
+  width: 38px; height: 38px;
+  background: #fff; border: none;
+  border-radius: 8px; font-size: 20px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  font-weight: 700; color: var(--g2); line-height: 1;
+  transition: background var(--t-fast) var(--ease),
+              transform   var(--t-fast) var(--ease);
+}
+.zoom-btn:hover  { background: var(--cream); transform: scale(1.05); }
+.zoom-btn:active { transform: scale(0.95); }
+
+/* ── GPS FAB ─────────────────────────────────────────────── */
+.gps-fab {
+  position: absolute;
+  bottom: 16px; right: 12px;
+  z-index: calc(var(--z-overlay) + 50);
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: #fff; border: none; cursor: pointer;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform var(--t-fast) var(--ease),
+              box-shadow var(--t-fast) var(--ease);
+}
+.gps-fab:hover  { transform: scale(1.08); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+.gps-fab:active { transform: scale(0.95); }
+.gps-fab svg {
+  width: 22px; height: 22px;
+  fill: none; stroke: var(--g2);
+  stroke-width: 2; stroke-linecap: round;
+}
+
+/* ── MAP BOTTOM BAR ──────────────────────────────────────── */
+.map-bottom {
+  background: #fff;
+  padding: 14px 16px 20px;
+  border-top: 1px solid #eee;
+  flex-shrink: 0;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.map-addr-row {
+  display: flex; align-items: flex-start;
+  gap: 10px; margin-bottom: 14px;
+}
+.map-addr-text { flex: 1; }
+.map-area-name {
+  font-weight: 700; font-size: 17px;
+  color: var(--td); margin-bottom: 3px;
+}
+.map-full-addr {
+  font-size: 12px; color: var(--tmut);
+  line-height: 1.5; min-height: 16px;
+}
+.map-coords {
+  font-size: 10px; color: var(--g4);
+  margin-top: 3px; font-weight: 500;
+}
+
+/* ── CONFIRM LOCATION BUTTON ─────────────────────────────── */
+.confirm-loc-btn {
+  width: 100%; padding: 15px;
+  background: var(--g2); color: #fff;
+  border: none; border-radius: var(--r-sm);
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px; font-weight: 600; cursor: pointer;
+  transition: background var(--t-fast) var(--ease),
+              transform   var(--t-fast) var(--ease);
+}
+.confirm-loc-btn:hover:not(:disabled) {
+  background: var(--g3);
+  transform: translateY(-1px);
+}
+.confirm-loc-btn:disabled { opacity: 0.45; cursor: not-allowed; }

@@ -1,0 +1,227 @@
+/* ============================================================
+   BASE — SabziBuddy
+   html / body defaults + global utility classes
+   ============================================================ */
+
+/* ── DOCUMENT ────────────────────────────────────────────── */
+
+html {
+  margin: 0;          
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  position: relative;
+  margin: 0;         
+  font-family: 'Outfit', sans-serif;
+  background: var(--page-bg);
+  color: var(--td);
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-bottom: 70px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── UTILITY ─────────────────────────────────────────────── */
+
+.hidden {
+  display: none !important;
+}
+
+/* Required field star */
+.req-star {
+  color: var(--terra);
+}
+
+/* "(optional)" label inline */
+.optional-lbl {
+  font-size: 10px;
+  color: var(--tmut);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* "* Required fields" note below forms */
+.req-note {
+  font-size: 10px;
+  color: var(--terra);
+  font-weight: 400;
+  text-transform: none;
+}
+
+/* Visually hidden but accessible */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* No tap highlight on mobile */
+button,
+a,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── SECTION HEADING ─────────────────────────────────────── */
+.section-head {
+  padding: 16px 16px 4px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.section-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--td);
+  letter-spacing: -0.2px;
+}
+
+.section-count {
+  font-size: 12px;
+  color: var(--tmut);
+}
+
+.section-sub {
+  padding: 0 16px 12px;
+  font-size: 13px;
+  color: var(--tmut);
+}
+
+/* ── MAIN BANNER SLIDER ──────────────────────────────────── */
+.main-banner-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  background: #eee;
+  line-height: 0;         /* removes img gap */
+  height: 240px;          /* tall enough to sit behind header AND show a bit below it */
+  z-index: 1;             /* below header (z-index 200) so header controls stay on top */
+  /* Scroll-collapse parallax/fade (js/modules/header-scroll.js):
+     transform + opacity only, GPU accelerated. */
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.main-slides {
+  display: flex;
+  width: 500%;
+  transition: transform 0.8s ease;
+  will-change: transform;
+}
+
+.main-slide {
+  width: 20%;
+  height: 240px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.main-banner-dots {
+  position: absolute;
+  bottom: 7px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: var(--z-base);
+}
+
+.mb-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0.4;
+  transition: opacity var(--t-fast) var(--ease);
+}
+.mb-dot.active { opacity: 1; }
+
+/* ── FILTER ROW (subcategory pills) ──────────────────────── */
+.filter-row {
+  display: flex;
+  gap: 6px;
+  padding: 10px 12px 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: var(--page-bg);
+}
+.filter-row::-webkit-scrollbar { display: none; }
+.filter-row.hidden              { display: none; }
+
+.filter-btn {
+  background: var(--white);
+  border: 1.5px solid var(--cream2);
+  color: var(--tm);
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--t-fast) var(--ease);
+  flex-shrink: 0;
+}
+.filter-btn.active,
+.filter-btn:hover {
+  background: var(--g2);
+  border-color: var(--g2);
+  color: #fff;
+}
+
+/* ── PHONE FIELD (order form) ────────────────────────────── */
+/* Full styles in components/inputs.css — base wrapper here  */
+.phone-field-wrap {
+  display: flex;
+  align-items: center;
+  background: var(--cream);
+  border: 1.5px solid var(--cream2);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  transition: all var(--t-fast) var(--ease);
+}
+.phone-field-wrap.focused,
+.phone-field-wrap:focus-within {
+  border-color: var(--g4);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(74, 139, 92, 0.1);
+}
+
+.phone-field-prefix {
+  padding: 12px 10px 12px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--tm);
+  border-right: 1.5px solid var(--cream2);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.phone-field-wrap input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 12px 14px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  color: var(--td);
+  outline: none;
+}
+
+.grecaptcha-badge {
+  visibility: hidden !important;
+}

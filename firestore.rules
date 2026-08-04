@@ -1,0 +1,166 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /* ══════════════════════════════════════════
+       HELPERS
+       PHASE 3: Role custom claims ki jagah
+       `userRoles/{uid}` collection lookup use kiya
+       hai — kyunki docs/ADMIN_FEATURES.md aur
+       docs/DEVELOPER_GUIDE.md already isी schema
+       (role: owner/manager/delivery) reference
+       karte hain, aur admin panel source (admin/
+       folder) is upload me nahi hai isliye custom-
+       claims token-refresh wala frontend change
+       hum abhi nahi kar sakte. Ye lookup approach
+       bina admin panel code chuye kaam karta hai.
+       ══════════════════════════════════════════ */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function _role() {
+      return get(/databases/$(database)/documents/userRoles/$(request.auth.uid)).data.role;
+    }
+    function isOwner() {
+      return isSignedIn() && _role() == 'owner';
+    }
+    function isAdmin() {
+      // 'admin' = owner ya manager, dono ke paas products/orders/config access hai
+      return isSignedIn() && _role() in ['owner', 'manager'];
+    }
+    function isDelivery() {
+      return isSignedIn() && _role() == 'delivery';
+    }
+    // Order document ka 'phone' field OTP-verified login phone se match karta hai ya nahi
+    function ownsPhone(phone) {
+      return isSignedIn() && request.auth.token.phone_number == '+91' + phone;
+    }
+
+    /* ══════════════════════════════════════════
+       USER ROLES  (doc id = admin/staff ka auth
+       uid — Email/Password login se banta hai)
+       - Har koi apna khud ka role read kar sakta
+         hai (login ke baad UI role check ke liye).
+       - Sirf owner naye role likh/badal sakta hai
+         — chahe UI se ho ya assignUserRole Cloud
+         Function se (Function bhi admin SDK use
+         karta hai isliye rules bypass karta hai,
+         par extra owner-only check function ke
+         andar bhi hai).
+       ══════════════════════════════════════════ */
+    match /userRoles/{uid} {
+      allow read: if isSignedIn() && (request.auth.uid == uid || isAdmin() || isDelivery());
+      allow write: if isOwner();
+    }
+
+    /* ══════════════════════════════════════════
+       USERS  (doc id = auth uid — order.js me
+       isko fix kiya gaya hai, pehle 'phone' tha)
+       ══════════════════════════════════════════ */
+    match /users/{uid} {
+      allow read, write: if isSignedIn() && request.auth.uid == uid;
+      allow read, write: if isAdmin();
+    }
+
+    /* ══════════════════════════════════════════
+       PRODUCTS (public catalog)
+       PHASE 1: stock/orderedCount ab sirf
+       placeOrder Cloud Function (admin SDK) se
+       update hote hain — client-side transitional
+       access hata diya gaya hai.
+       ══════════════════════════════════════════ */
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    /* ══════════════════════════════════════════
+       ORDERS
+       PHASE 1: order creation ab sirf placeOrder
+       Cloud Function (admin SDK) se hoti hai —
+       client seedha 'orders' collection me create
+       nahi kar sakta (price/stock manipulation
+       is tarah completely block ho jaata hai).
+       Customer sirf apne orders read kar sakta
+       hai (OTP-verified phone match se).
+       PHASE 3: Delivery staff sirf apne assigned
+       orders (deliveryBoyUid == unka uid) ya abhi
+       unassigned pending orders dekh/update kar
+       sakte hain — docs/ADMIN_FEATURES.md ke
+       mutabik ("delivery: Only their assigned
+       orders"). NOTE: admin panel (assign-order
+       UI) ko order assign karte waqt `deliveryBoyUid`
+       field set karna hoga — admin/ folder is
+       upload me nahi hai isliye wo change khud
+       admin panel code me karna padega.
+       ══════════════════════════════════════════ */
+    match /orders/{orderId} {
+      allow create: if false; // sirf Cloud Function (admin SDK) se
+      allow read: if ownsPhone(resource.data.phone)
+                  || isAdmin()
+                  || (isDelivery()
+                      && (resource.data.deliveryBoyUid == request.auth.uid
+                          || (resource.data.deliveryBoy == null && resource.data.status == 'pending')));
+      allow update: if isAdmin()
+                    || (isDelivery()
+                        && (resource.data.deliveryBoyUid == request.auth.uid
+                            || (resource.data.deliveryBoy == null && resource.data.status == 'pending'))
+                        && request.resource.data.diff(resource.data).affectedKeys()
+                             .hasOnly(['status', 'deliveryBoy', 'deliveryBoyPhone', 'deliveryBoyUid', 'customerPin']));
+      allow delete: if isOwner();
+    }
+
+    /* ══════════════════════════════════════════
+       COUPONS
+       PHASE 1: usedCount ab sirf placeOrder Cloud
+       Function se increment hota hai.
+       ══════════════════════════════════════════ */
+    match /coupons/{code} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    /* ══════════════════════════════════════════
+       CONFIG  (deliveryZone, flashDeal, homeSections,
+       slots, siteSettings, zoneSettings)
+       ══════════════════════════════════════════ */
+    match /config/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    /* ══════════════════════════════════════════
+       META  (orderCounter)
+       PHASE 1: orderCounter ab sirf placeOrder
+       Cloud Function (admin SDK) update karta hai.
+       ══════════════════════════════════════════ */
+    match /meta/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    /* ══════════════════════════════════════════
+       NOTIFICATIONS
+       ══════════════════════════════════════════ */
+    match /notifications/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    /* ══════════════════════════════════════════
+       SUGGESTIONS (search)
+       ══════════════════════════════════════════ */
+    match /suggestions/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    /* ══════════════════════════════════════════
+       DEFAULT DENY — jo upar list nahi hai,
+       wahan kuch bhi read/write nahi hoga.
+       ══════════════════════════════════════════ */
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

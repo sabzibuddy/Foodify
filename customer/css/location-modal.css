@@ -1,0 +1,327 @@
+/* ════════════════════════════════════════════════════════════
+   location-modal.css — SabziBuddy
+   Zepto-style first-time location permission modal.
+   Mobile-first. Slides up from bottom.
+════════════════════════════════════════════════════════════ */
+
+/* ── Overlay ────────────────────────────────────────────── */
+.loc-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 35, 24, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s var(--ease), visibility 0.35s;
+}
+
+.loc-modal-overlay.loc-modal--visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.loc-modal-overlay.loc-modal--closing {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* ── Sheet (slides up) ──────────────────────────────────── */
+.loc-modal-sheet {
+  width: 100%;
+  max-width: 480px;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  padding: 0 0 max(24px, env(safe-area-inset-bottom)) 0;
+  transform: translateY(100%);
+  transition: transform 0.38s var(--ease-out);
+  box-shadow: 0 -8px 40px rgba(15, 35, 24, 0.18);
+  max-height: 92vh;
+  overflow-y: auto;
+}
+
+.loc-modal--visible .loc-modal-sheet {
+  transform: translateY(0);
+}
+
+.loc-modal--closing .loc-modal-sheet {
+  transform: translateY(100%);
+}
+
+/* ── Drag handle ────────────────────────────────────────── */
+.loc-modal-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--cream2);
+  border-radius: 99px;
+  margin: 12px auto 0;
+}
+
+/* ── Header area ────────────────────────────────────────── */
+.loc-modal-header {
+  padding: 20px 24px 8px;
+  text-align: center;
+}
+
+.loc-modal-emoji {
+  font-size: 40px;
+  line-height: 1;
+  margin-bottom: 12px;
+  display: block;
+  /* Subtle bounce animation */
+  animation: locPinBounce 1.2s var(--ease-out) 0.4s both;
+}
+
+@keyframes locPinBounce {
+  0%   { transform: translateY(-16px); opacity: 0; }
+  60%  { transform: translateY(4px);  opacity: 1; }
+  80%  { transform: translateY(-3px); }
+  100% { transform: translateY(0); }
+}
+
+.loc-modal-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--td);
+  margin: 0 0 6px;
+  font-family: 'Outfit', sans-serif;
+  line-height: 1.25;
+}
+
+.loc-modal-subtitle {
+  font-size: 13px;
+  color: var(--tmut);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Body ───────────────────────────────────────────────── */
+.loc-modal-body {
+  padding: 20px 20px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── GPS Button ─────────────────────────────────────────── */
+.loc-gps-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--g2);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-md);
+  padding: 15px 20px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.12s, opacity 0.18s;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.loc-gps-btn:active:not(:disabled) {
+  background: var(--g3);
+  transform: scale(0.98);
+}
+
+.loc-gps-btn:disabled,
+.loc-gps-btn--loading {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+.loc-gps-btn--loading::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -100%;
+  height: 3px;
+  width: 60%;
+  background: rgba(255,255,255,0.5);
+  animation: locLoadBar 1.4s ease-in-out infinite;
+  border-radius: 2px;
+}
+
+@keyframes locLoadBar {
+  0%   { left: -60%; }
+  100% { left: 110%; }
+}
+
+.loc-gps-icon { font-size: 18px; line-height: 1; }
+.loc-gps-text { flex: 1; text-align: left; }
+
+/* ── Divider ────────────────────────────────────────────── */
+.loc-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--tmut);
+  font-size: 12px;
+}
+.loc-divider::before,
+.loc-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--cream2);
+}
+
+/* ── Search Box ─────────────────────────────────────────── */
+.loc-search-wrap {
+  position: relative;
+}
+
+.loc-search-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--cream);
+  border: 1.5px solid var(--cream2);
+  border-radius: var(--r-md);
+  padding: 0 14px;
+  transition: border-color 0.18s;
+}
+
+.loc-search-input-row:focus-within {
+  border-color: var(--g2);
+  background: #fff;
+}
+
+.loc-search-input-row svg {
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+#loc-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 14px 0;
+  font-size: 14px;
+  font-family: 'Outfit', sans-serif;
+  color: var(--td);
+  outline: none;
+}
+
+#loc-search-input::placeholder {
+  color: var(--tmut);
+}
+
+/* ── Suggestions ────────────────────────────────────────── */
+#loc-suggestions {
+  display: none;
+  background: #fff;
+  border: 1.5px solid var(--cream2);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.loc-sugg-item {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: none;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  border-bottom: 1px solid var(--cream);
+  transition: background 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.loc-sugg-item:last-child { border-bottom: none; }
+.loc-sugg-item:active     { background: var(--cream); }
+
+.loc-sugg-icon { flex-shrink: 0; margin-top: 2px; }
+
+.loc-sugg-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.loc-sugg-primary {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--td);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.loc-sugg-secondary {
+  font-size: 11px;
+  color: var(--tmut);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.loc-sugg-loading,
+.loc-sugg-empty {
+  padding: 16px 14px;
+  font-size: 13px;
+  color: var(--tmut);
+  text-align: center;
+}
+
+/* ── Error message ──────────────────────────────────────── */
+#loc-error-msg {
+  display: none;
+  font-size: 12px;
+  color: #e53935;
+  background: #ffeaea;
+  border-radius: 8px;
+  padding: 10px 14px;
+  text-align: center;
+  animation: locErrFade 0.2s ease;
+}
+
+@keyframes locErrFade {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Skip button ────────────────────────────────────────── */
+.loc-skip-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--tmut);
+  font-size: 13px;
+  padding: 14px;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s;
+}
+
+.loc-skip-btn:active { color: var(--td); }
+
+/* ── Desktop center sheet ───────────────────────────────── */
+@media (min-width: 480px) {
+  .loc-modal-overlay {
+    align-items: center;
+  }
+  .loc-modal-sheet {
+    border-radius: var(--r-lg);
+    margin: 16px;
+    max-height: 80vh;
+  }
+}

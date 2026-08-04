@@ -1,0 +1,665 @@
+/* ============================================================
+   HEADER — SabziBuddy
+   Merged: header + search + category + bottom-nav
+   ============================================================ */
+
+
+/* ════════════════════════════════════════
+   1. HEADER WRAPPER
+════════════════════════════════════════ */
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);    /* 200 */
+  /* Glass surface — background alpha, blur, shadow-alpha and
+     border-alpha are ALL written every animation frame by
+     js/modules/header-scroll.js as a direct function of scroll
+     progress (0 → 1), via these custom properties. There is
+     deliberately NO CSS `transition` on any of them: the scroll
+     position itself is the only clock driving the fade, so it can
+     never lag behind or "pop" independently of where the hero has
+     actually scrolled to. */
+  background: rgba(255, 255, 255, var(--hdr-bg-a, 0));
+  -webkit-backdrop-filter: blur(var(--hdr-blur, 0px));
+  backdrop-filter: blur(var(--hdr-blur, 0px));
+  border-bottom: 1px solid rgba(0, 0, 0, var(--hdr-border-a, 0));
+  transition: background-color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+              -webkit-backdrop-filter 220ms cubic-bezier(0.22, 1, 0.36, 1),
+              backdrop-filter 220ms cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  padding: 10px 16px 16px;
+  margin-bottom: 0;
+  /* The header's real box height changes exactly once, at the very
+     end of the collapse (js/modules/header-scroll.js removes the
+     now fully-invisible location row's layout weight). Without this,
+     the browser's automatic scroll-anchoring can "helpfully" add its
+     own compensating scroll offset the instant that happens, which
+     reads as a sudden snap. Position is owned entirely by our own
+     progress-driven transforms, so anchoring is switched off. */
+  overflow-anchor: none;
+}
+
+/* Compact spacing is applied as a plain inline style by
+   header-scroll.js, and ONLY once scroll progress has fully reached
+   1 — i.e. the location row is already fully translated away and
+   fully transparent, so removing its layout weight here causes zero
+   visible change. This is the single non-interpolated step in the
+   whole module (see the "finished" branch in apply()); it reverts
+   instantly the moment the user scrolls back up even one pixel, so
+   it never reads as a separate, independently-timed snap. */
+
+/* ── HEADER ROW ──────────────────────────────────────────── */
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  /* Scroll-collapse animation (see js/modules/header-scroll.js):
+     only transform + opacity are ever touched here, both GPU
+     accelerated, so the row can slide/fade away on scroll
+     without triggering layout or paint of the rest of the page. */
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* ── DELIVERY LOCATION ROW ───────────────────────────────── */
+.delivery-loc-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background var(--t-fast) var(--ease);
+  flex: 1;
+  max-width: calc(100% - 100px);
+}
+@media (hover: hover) {
+  .delivery-loc-row:hover {
+    background: rgba(255, 255, 255, 0.18);
+  }
+}
+
+.dlr-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.dlr-city-row {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+#dlr-city {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+  line-height: 1.2;
+}
+
+.dlr-chevron {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.dlr-addr {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.65);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 210px;
+  line-height: 1.3;
+  margin-top: 1px;
+}
+
+/* ── HEADER ACTIONS ──────────────────────────────────────── */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* ── CART ICON BUTTON ────────────────────────────────────── */
+.cart-icon-btn {
+  position: relative;
+  background: rgba(255, 255, 255, 0.14);
+  border: 2px solid rgba(255, 255, 255, 0.32);
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--t-fast) var(--ease);
+}
+.cart-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.24);
+  transform: scale(1.05);
+}
+
+.cart-emoji {
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* Badge — animation in animations.css */
+.cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #fff;
+  color: #e95322;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  border-radius: 50%;
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1.5px solid #e95322;
+  box-sizing: border-box;
+}
+
+/* Cart total pill below button */
+.cart-total-display {
+  position: absolute;
+  bottom: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  color: var(--g2);
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid var(--cream2);
+  white-space: nowrap;
+  display: none;
+}
+
+/* ── PROFILE ICON BUTTON ─────────────────────────────────── */
+.profile-icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  transition: all var(--t-fast) var(--ease);
+  flex-shrink: 0;
+}
+.profile-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: #fff;
+}
+.profile-icon-btn.logged-in {
+  background: #fff;
+  color: #e95322;
+  border-color: #fff;
+}
+.profile-icon-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+
+/* ════════════════════════════════════════
+   2. SEARCH BAR + SUGGESTIONS
+════════════════════════════════════════ */
+
+.search-section {
+  background: transparent;
+  padding: 15px 0 0;
+  position: relative;
+  z-index: auto;
+  border-radius: 0;
+  box-shadow: none;
+  margin-bottom: 0;
+  /* Rises smoothly on scroll to fill the space vacated by the
+     location row above it — transform only, GPU accelerated. */
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* ── SEARCH BAR (white pill) ─────────────────────────────── */
+.search-inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 4px 12px 4px 14px;
+  transition: box-shadow var(--t-fast) var(--ease);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+}
+.search-inner:focus-within {
+  box-shadow: 0 2px 14px rgba(28, 56, 41, 0.22);
+}
+
+.search-icon-svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: var(--tmut);
+  stroke-width: 2;
+  stroke-linecap: round;
+  flex-shrink: 0;
+}
+
+.search-inner input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  color: var(--td);
+  outline: none;
+  padding: 9px 0;
+}
+.search-inner input::placeholder {
+  color: var(--tmut);
+}
+
+/* ── CLEAR SEARCH BUTTON ─────────────────────────────────── */
+.clear-search-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #bbb;
+  font-size: 20px;
+  font-weight: 300;
+  padding: 0 4px;
+  line-height: 1;
+  flex-shrink: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--t-fast);
+  font-family: sans-serif;
+  margin-right: -2px;
+}
+.clear-search-btn:hover   { color: var(--tm); }
+.clear-search-btn.visible { display: flex; }
+
+/* Legacy clear button (map search) */
+.clear-btn {
+  background: var(--cream2);
+  border: none;
+  color: var(--tmut);
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  font-size: 16px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--t-fast), background var(--t-fast);
+}
+.clear-btn:hover   { background: #f0ece4; }
+.clear-btn.visible { opacity: 1; visibility: visible; }
+
+/* ── VOICE / MIC BUTTON ──────────────────────────────────── */
+.voice-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  color: var(--tmut);
+  flex-shrink: 0;
+  transition: color var(--t-fast), background var(--t-fast);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.voice-btn:hover {
+  color: var(--g3);
+  background: var(--cream2);
+}
+.voice-btn svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* ── SEARCH SUGGESTIONS DROPDOWN ─────────────────────────── */
+#search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-md);
+  z-index: var(--z-dropdown);
+  display: none;
+  overflow: hidden;
+  border: 1px solid var(--cream2);
+  max-height: 240px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--cream2) transparent;
+}
+
+.sugg-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 16px;
+  cursor: pointer;
+  transition: background var(--t-fast);
+  border-bottom: 1px solid var(--cream);
+}
+.sugg-item:last-child { border-bottom: none; }
+.sugg-item:hover      { background: var(--cream); }
+
+.sugg-name  { font-weight: 600; font-size: 14px; }
+.sugg-hindi { font-size: 11px; color: var(--tmut); }
+
+/* ── FREE DELIVERY BAR (header) ──────────────────────────── */
+#free-delivery-bar {
+  display: none;
+  background: #fff;
+  padding: 8px 16px;
+  border-bottom: 1px solid #f0ece4;
+  align-items: center;
+  gap: 12px;
+}
+
+.fd-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.fd-circle {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+}
+.fd-circle svg { transform: rotate(-90deg); }
+
+#fd-fill { transition: stroke-dashoffset 0.5s ease; }
+
+.fd-emoji {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+.fd-emoji.mirror { transform: scaleX(-1); }
+
+.fd-text        { flex: 1; font-size: 13px; color: var(--tm); }
+.fd-text strong { color: var(--g2); }
+
+.fd-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--tmut);
+  font-size: 18px;
+  padding: 4px;
+}
+
+
+/* ════════════════════════════════════════
+   3. CATEGORY TABS
+════════════════════════════════════════ */
+
+.top-cats {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: #fff;
+  border-bottom: 1px solid #f0ece4;
+  /* Sticks directly under the search bar once scrolled — the
+     `top` offset is a CSS variable kept in sync (in px, purely
+     via transform/opacity math, no layout thrashing) by
+     js/modules/header-scroll.js as the header collapses.
+     Falls back to a sane collapsed-header estimate if the script
+     hasn't run yet (e.g. very first paint). */
+  position: sticky;
+  top: var(--catbar-top, 96px);
+  z-index: 150; /* above the hero banner (1), below the header (200) */
+  will-change: transform;
+  /* Same reasoning as `header`'s overflow-anchor above: its sticky
+     `top` is rewritten every frame by header-scroll.js, and browser
+     scroll-anchoring reacting to that on its own would fight the
+     script's own math and read as a jump. */
+  overflow-anchor: none;
+}
+.top-cats::-webkit-scrollbar { display: none; }
+
+/* ── SINGLE TAB BUTTON ───────────────────────────────────── */
+.top-cat-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  padding: 10px 2px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--tmut);
+  white-space: normal;
+  word-break: break-word;
+  text-align: center;
+  transition: color var(--t-fast) var(--ease);
+  border-bottom: 3px solid transparent;
+  flex: 0 0 82px;
+  width: 82px;
+  min-width: 0;
+}
+
+.top-cat-btn.hidden-cat { display: none !important; }
+
+/* ── CATEGORY ICON BOX ───────────────────────────────────── */
+.cat-img-wrap {
+  width: 66px;
+  height: 66px;
+  border-radius: 14px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: transform var(--t-fast) var(--ease),
+              background var(--t-fast) var(--ease);
+}
+.top-cat-btn:hover  .cat-img-wrap { transform: scale(1.06); }
+
+.cat-img {
+  width: 62px;
+  height: 62px;
+  object-fit: cover;
+  display: block;
+}
+
+.zone-svg {
+  width: 30px;
+  height: 30px;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* ── SLIDING ACTIVE INDICATOR ────────────────────────────── */
+#cat-indicator {
+  position: absolute;
+  bottom: 0;
+  height: 3px;
+  background: #ff2d6f;
+  border-radius: 2px 2px 0 0;
+  transition:
+    left  0.32s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: var(--z-base);
+}
+
+/* ── PREMIUM SECTION DIVIDER (below category tiles) ─────────
+   Soft fade-in/fade-out hairline, Swiggy/Zomato style — no
+   hard dark lines, just a subtle presence between sections. */
+.cat-section-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 0, 0, .08),
+    transparent
+  );
+  border: none;
+  margin: 0;
+}
+
+
+/* ════════════════════════════════════════
+   4. BOTTOM NAV
+   Single source of truth — duplicates in
+   footer.css hatao agar hain.
+════════════════════════════════════════ */
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-sticky);
+  background: #fff;
+  border-top: 1.5px solid #e8f0e8;
+  display: flex;
+  align-items: stretch;
+  box-shadow: 0 -2px 16px rgba(28, 56, 41, 0.10);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ── SINGLE NAV BUTTON ───────────────────────────────────── */
+.bnav-btn {
+  flex: 1;
+  padding: 10px 0 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--g2);
+  transition: color var(--t-fast) var(--ease),
+              transform var(--t-fast) var(--ease);
+}
+.bnav-btn:active { transform: scale(0.92); }
+
+.bnav-btn--muted {
+  font-weight: 600;
+  color: var(--tmut);
+}
+
+.bnav-btn--dot { position: relative; }
+.bnav-btn--dot::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: calc(50% - 14px);
+  width: 7px;
+  height: 7px;
+  background: var(--ga);
+  border-radius: 50%;
+}
+
+/* ════════════════════════════════════════
+   GLOBAL PAGE BACK BUTTON
+════════════════════════════════════════ */
+.page-back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+  transition: transform 0.16s ease, background 0.16s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.page-back-btn:active {
+  transform: scale(0.88);
+}
+
+/* Product detail page — image ke upar dark overlay */
+.page-back-btn--overlay {
+  background: rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.22);
+}
+.page-back-btn--overlay:hover {
+  background: rgba(0, 0, 0, 0.58);
+}
+
+/* Profile, Orders, Wishlist etc. — dark green header ke andar */
+.page-back-btn--header {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1.5px solid rgba(255, 255, 255, 0.28);
+}
+.page-back-btn--header:hover {
+  background: rgba(255, 255, 255, 0.26);
+}
+
+/* Arrow icon */
+.page-back-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

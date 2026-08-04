@@ -1,0 +1,592 @@
+/* ============================================================
+   PROFILE & WISHLIST — SabziBuddy
+   Full-screen profile page · Side drawer panel · Order items
+   Wishlist page
+   ============================================================ */
+
+
+/* ══════════════════════════════════════════════════════════
+   1. FULL-SCREEN PROFILE PAGE
+   ══════════════════════════════════════════════════════════ */
+
+.profile-page {
+  position: fixed; inset: 0;
+  background: #fff;
+  z-index: var(--z-modal);  /* 600 — above everything including cart */
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.profile-page.open { transform: translateX(0); }
+
+/* ── Page Header ─────────────────────────────────────────── */
+.pp-header {
+  background: linear-gradient(135deg, var(--g1) 0%, var(--g2) 70%, var(--g3) 100%);
+  padding: 14px 16px 10px;
+  display: flex; align-items: center; gap: 14px;
+  flex-shrink: 0;
+}
+.pp-back-btn {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: rgba(255,255,255,0.18); border: none; cursor: pointer;
+  color: #fff; font-size: 20px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--t-fast) var(--ease); flex-shrink: 0;
+}
+.pp-back-btn:hover { background: rgba(255,255,255,0.28); }
+.pp-header-title  { font-size: 17px; font-weight: 700; color: #fff; flex: 1; }
+.pp-header-spacer { width: 38px; }
+
+/* ── Page Body ───────────────────────────────────────────── */
+.pp-body {
+  flex: 1; overflow-y: auto;
+  padding: 20px 16px 40px;
+  background: var(--cream);
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--cream2) transparent;
+}
+
+/* Loading state */
+.pp-loading { text-align: center; padding: 40px; color: var(--tmut); }
+
+/* ── Avatar ──────────────────────────────────────────────── */
+.pp-avatar-wrap {
+  display: flex; flex-direction: column; align-items: center;
+  margin-bottom: 24px; padding-top: 8px;
+}
+.pp-avatar {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--g3), var(--ga));
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; font-weight: 800;
+  box-shadow: 0 6px 24px rgba(28,56,41,0.3), 0 0 0 4px rgba(107,191,123,0.25);
+  letter-spacing: -1px; margin-bottom: 10px;
+}
+.pp-avatar-name  { font-size: 18px; font-weight: 700; color: var(--g2); }
+.pp-avatar-phone { font-size: 12px; color: var(--tmut); margin-top: 2px; }
+
+/* ── Card ────────────────────────────────────────────────── */
+.pp-card {
+  background: #fff; border-radius: var(--r-md);
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(28,56,41,0.07);
+  margin-bottom: 16px;
+}
+.pp-card-title {
+  font-size: 11px; font-weight: 700; color: var(--g4);
+  text-transform: uppercase; letter-spacing: 1.5px;
+  margin-bottom: 14px;
+  display: flex; align-items: center; gap: 6px;
+}
+
+/* ── Form Fields ─────────────────────────────────────────── */
+.pp-field { margin-bottom: 14px; }
+.pp-field label {
+  display: block; font-size: 12px; font-weight: 600;
+  color: var(--tm); margin-bottom: 5px;
+}
+.pp-field input {
+  width: 100%; padding: 12px 14px;
+  background: var(--cream);
+  border: 1.5px solid var(--cream2);
+  border-radius: 10px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px; color: var(--td);
+  outline: none;
+  transition: border-color var(--t-fast) var(--ease),
+              background   var(--t-fast) var(--ease),
+              box-shadow   var(--t-fast) var(--ease);
+  box-sizing: border-box;
+}
+.pp-field input:focus {
+  border-color: var(--g4); background: #fff;
+  box-shadow: 0 0 0 3px rgba(74,139,92,0.1);
+}
+/* Read-only (phone number) */
+.pp-field input[readonly],
+.pp-field input:read-only {
+  background: #f0ece4; color: var(--tmut);
+  cursor: not-allowed; border-color: var(--cream2);
+}
+.pp-field input[readonly]:focus,
+.pp-field input:read-only:focus {
+  border-color: var(--cream2);
+  box-shadow: none;
+}
+.pp-readonly-note {
+  font-size: 10px; color: var(--tmut); margin-top: 4px;
+  display: flex; align-items: center; gap: 3px;
+}
+
+/* Message (success / error) */
+.pp-msg {
+  font-size: 13px; font-weight: 600;
+  min-height: 20px; margin-bottom: 10px; text-align: center;
+}
+
+/* Save button */
+.pp-save-btn {
+  width: 100%; padding: 15px;
+  background: var(--g2); color: #fff;
+  border: none; border-radius: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  transition: background   var(--t-base) var(--ease),
+              transform    var(--t-base) var(--ease),
+              box-shadow   var(--t-base) var(--ease);
+  margin-top: 4px;
+}
+.pp-save-btn:hover {
+  background: var(--g3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(28,56,41,0.25);
+}
+.pp-save-btn:active { transform: translateY(0); }
+
+.pp-last-updated {
+  text-align: center; font-size: 11px;
+  color: var(--tmut); margin-top: 16px;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   2. PROFILE PANEL (Side Drawer)
+   Backdrop → cart.css (.cart-overlay)
+   ══════════════════════════════════════════════════════════ */
+
+.profile-panel {
+  position: fixed; right: 0; top: 0; bottom: 0;
+  width: min(380px, 100vw);
+  background: #fff;
+  z-index: calc(var(--z-overlay) + 1);  /* 501 — same layer as cart-panel */
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-lg);
+}
+.profile-panel.open { transform: translateX(0); }
+
+/* Panel header */
+.profile-panel-header {
+  background: #fff;
+  border-bottom: 1px solid var(--cream2);
+  flex-direction: column;
+  gap: 0; align-items: stretch;
+}
+.profile-panel-header-inner {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px 10px;
+  background: linear-gradient(135deg, var(--g1) 0%, var(--g2) 70%, var(--g3) 100%);
+}
+.profile-panel-title { font-size: 17px; font-weight: 700; color: #fff; flex: 1; }
+
+/* Panel body */
+.profile-body { flex: 1; overflow-y: auto; }
+
+/* ── User Row ────────────────────────────────────────────── */
+.profile-user-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; background: #fff;
+  border-bottom: 1px solid var(--cream2);
+}
+/* 42px initials circle (panel) vs 80px (full page) */
+.profile-avatar {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--g3), var(--ga));
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 800; flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(28,56,41,0.15);
+}
+.profile-user-info { flex: 1; min-width: 0; }
+.profile-header-name {
+  font-size: 15px; font-weight: 700; color: var(--td);
+  line-height: 1.3;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.profile-panel-subtitle { font-size: 12px; color: var(--tmut); margin-top: 1px; }
+
+/* ── Link Buttons ────────────────────────────────────────── */
+.profile-link-btn {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; padding: 16px 20px;
+  background: none; border: none; cursor: pointer;
+  font-family: 'Outfit', sans-serif; font-size: 14px; color: var(--tm);
+  border-bottom: 1px solid var(--cream);
+  text-align: left; position: relative; overflow: hidden;
+  transition: background var(--t-fast) var(--ease),
+              color     var(--t-fast) var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.profile-link-btn--col { flex-direction: column; align-items: flex-start; gap: 2px; }
+@media (hover: hover) {
+  .profile-link-btn:hover { color: var(--g2); background: rgba(107,191,123,0.07); }
+  .profile-link-btn.wa-btn:hover { background: #1ebe57; color: #fff; }
+}
+.profile-link-btn:active { background: rgba(107,191,123,0.13); }
+
+.plb-left  { display: flex; align-items: center; gap: 8px; }
+.plb-right { display: flex; align-items: center; gap: 6px; }
+.plb-icon  { width: 20px; text-align: center; flex-shrink: 0; }
+
+/* Arrow slides on hover */
+.plb-arrow {
+  font-size: 18px; color: var(--tmut);
+  margin-left: auto; flex-shrink: 0;
+  transition: transform var(--t-fast) var(--ease),
+              color     var(--t-fast) var(--ease);
+}
+@media (hover: hover) {
+  .profile-link-btn:hover .plb-arrow {
+    transform: translateX(4px); color: var(--g3);
+  }
+}
+
+.plb-hours {
+  font-size: 11px; color: var(--tmut);
+  font-weight: 400; padding-left: 28px;
+}
+
+/* ── Wishlist Highlight Row ──────────────────────────────── */
+.plb-wish-row {
+  background: linear-gradient(90deg, rgba(255,105,135,0.06) 0%, transparent 100%);
+  border-left: 3px solid #ff6987;
+}
+.plb-wish-row:hover {
+  background: linear-gradient(90deg, rgba(255,105,135,0.12) 0%, transparent 100%) !important;
+}
+
+/* ── Icon BG Wraps ───────────────────────────────────────── */
+.plb-icon-wrap {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: rgba(107,191,123,0.12);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background var(--t-fast) var(--ease);
+}
+@media (hover: hover) {
+  .profile-link-btn:hover .plb-icon-wrap { background: rgba(107,191,123,0.22); }
+}
+.plb-icon-wrap.red-icon    { background: rgba(220,38,38,0.08); }
+.plb-icon-wrap.green-icon  { background: rgba(37,211,102,0.12); }
+.plb-icon-wrap.blue-icon   { background: rgba(59,130,246,0.10); }
+.plb-icon-wrap.orange-icon { background: rgba(249,115,22,0.10); }
+
+/* SVG alignment inside link btn */
+.profile-link-btn > svg,
+.profile-link-btn > span.plb-left > svg {
+  flex-shrink: 0;
+  width: 20px !important; height: 20px !important;
+}
+.profile-link-btn--col .plb-left {
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* ── Badges ──────────────────────────────────────────────── */
+.wish-count-badge,
+.lang-badge {
+  font-size: 11px;
+  background: var(--cream2); color: var(--g2);
+  padding: 3px 9px; border-radius: 20px; font-weight: 700;
+}
+
+/* ── Section Labels ──────────────────────────────────────── */
+.profile-section       { padding: 18px 20px 4px; }
+.profile-section-label {
+  font-size: 10px; font-weight: 700; color: var(--g4);
+  text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px;
+}
+
+/* Thick cream divider between sections */
+.profile-divider {
+  height: 10px;
+  background: var(--cream);
+  border-top: 1px solid var(--cream2);
+  border-bottom: 1px solid var(--cream2);
+}
+
+/* ── Logout Button ───────────────────────────────────────── */
+.profile-logout-wrap { padding: 16px 16px 8px; }
+.profile-logout-btn {
+  width: 100%; padding: 14px;
+  background: #fff; border: 1.5px solid #fca5a5;
+  color: #dc2626; border-radius: var(--r-sm);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease,
+              border-color 0.18s ease, box-shadow 0.18s ease,
+              transform 0.18s ease;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  -webkit-tap-highlight-color: transparent;
+}
+/* Mobile tap — turant red fill */
+.profile-logout-btn:active {
+  background: #dc2626; color: #fff;
+  border-color: #dc2626;
+  box-shadow: 0 4px 16px rgba(220,38,38,0.3);
+  transform: scale(0.97);
+}
+/* Desktop hover only */
+@media (hover: hover) {
+  .profile-logout-btn:hover {
+    background: #dc2626; color: #fff; border-color: #dc2626;
+    box-shadow: 0 4px 16px rgba(220,38,38,0.3);
+    transform: translateY(-1px);
+  }
+}
+
+.profile-version {
+  text-align: center; padding: 0 16px 24px;
+  color: var(--tmut); font-size: 11px;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   3. ORDER ITEMS IN PROFILE
+   ══════════════════════════════════════════════════════════ */
+
+.my-order-item {
+  background: var(--cream); border-radius: 10px;
+  padding: 12px; margin: 0 16px 10px;
+  border: 1px solid var(--cream2);
+}
+.my-order-id   { font-weight: 700; font-size: 13px; color: var(--g2); }
+.my-order-pin {
+  font-size: 22px; font-weight: 800;
+  letter-spacing: 8px; color: var(--g2);
+  margin-top: 4px; font-family: 'Outfit', sans-serif;
+}
+.my-order-pin-lbl {
+  font-size: 10px; color: var(--tmut);
+  text-transform: uppercase; font-weight: 600;
+}
+.my-order-status {
+  display: inline-flex; align-items: center;
+  padding: 2px 8px; border-radius: 20px;
+  font-size: 10px; font-weight: 700; margin-top: 4px;
+}
+
+/* Order status badge colors */
+.mos-pending   { background: #fef3c7; color: #92400e; }
+.mos-assigned  { background: #dbeafe; color: #1e40af; }
+.mos-delivered { background: #dcfce7; color: #166534; }
+.mos-cancelled { background: #fee2e2; color: #991b1b; }
+
+
+/* ══════════════════════════════════════════════════════════
+   4. WISHLIST PAGE
+   ══════════════════════════════════════════════════════════ */
+
+.wishlist-page {
+  position: fixed;
+  inset: 0;
+  background: var(--cream);
+  z-index: calc(var(--z-overlay) + 5);
+  display: none;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform var(--t-slow) var(--ease-out);
+}
+.wishlist-page.open {
+  display: flex;
+  transform: translateX(0);
+}
+
+/* ── Wishlist Header ─────────────────────────────────────── */
+.wishlist-header {
+  background: linear-gradient(160deg, var(--g1) 0%, var(--g2) 100%);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+.wishlist-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px; font-weight: 700;
+  flex: 1;
+}
+
+/* ── Empty State ─────────────────────────────────────────── */
+.wishlist-empty {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 12px; padding: 40px 24px;
+}
+.wishlist-empty-icon { font-size: 56px; }
+.wishlist-empty-text {
+  font-size: 16px; font-weight: 600;
+  color: var(--tm); text-align: center;
+}
+.wishlist-empty-sub {
+  font-size: 13px; color: var(--tmut); text-align: center;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   ORDER TABS BAR  (Ongoing / Completed / Cancelled)
+   ══════════════════════════════════════════════════════════ */
+
+.order-tabs-bar {
+  display: flex;
+  gap: 8px;
+  padding: 14px 16px 10px;
+  background: var(--cream);
+  border-bottom: 1.5px solid var(--cream2);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.order-tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 9px 6px;
+  background: #fff;
+  border: 1.5px solid var(--cream2);
+  border-radius: 10px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tmut);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.order-tab-btn:hover:not(.active) {
+  border-color: var(--g4);
+  color: var(--g3);
+  background: rgba(74, 139, 92, 0.04);
+}
+
+.order-tab-btn.active {
+  background: var(--g2);
+  border-color: var(--g2);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(28, 56, 41, 0.22);
+}
+
+.otb-emoji {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.otb-label {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.order-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  line-height: 1;
+}
+
+.order-tab-btn:not(.active) .order-tab-count {
+  background: var(--g2);
+  color: #fff;
+}
+
+.orders-tab-list {
+  padding: 12px 0 20px;
+}
+
+
+
+/* ══════════════════════════════════════════════════════════
+   WISHLIST ACTION BAR  (Move All to Cart)
+   ══════════════════════════════════════════════════════════ */
+
+.wish-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px 10px;
+  background: var(--cream);
+  border-bottom: 1.5px solid var(--cream2);
+
+  position: sticky;
+  top: 64px;
+  z-index: 19;
+}
+
+.wish-count-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--td);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.wish-in-cart-note {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--g4);
+  background: rgba(74, 139, 92, 0.1);
+  padding: 2px 7px;
+  border-radius: 20px;
+}
+
+.wish-move-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  background: var(--g2);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  box-shadow: 0 3px 10px rgba(28, 56, 41, 0.22);
+}
+
+.wish-move-all-btn:hover:not(:disabled) {
+  background: var(--g3);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(28, 56, 41, 0.28);
+}
+
+.wish-move-all-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.wish-move-all-btn.all-in-cart {
+  background: var(--cream2);
+  color: var(--tmut);
+  box-shadow: none;
+  cursor: default;
+}
+

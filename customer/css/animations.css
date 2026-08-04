@@ -1,0 +1,234 @@
+/* ============================================================
+   ANIMATIONS — SabziBuddy
+   @keyframes + animated elements + celebration effects
+   ============================================================ */
+
+
+/* ══════════════════════════════════════════════════════════
+   1. @KEYFRAMES
+   ══════════════════════════════════════════════════════════ */
+
+/* ── LOADERS / SPINNERS ─────────────────────────────────── */
+@keyframes spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ── BADGE POP ──────────────────────────────────────────── */
+@keyframes pop {
+  0%   { transform: scale(0.6); }
+  50%  { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* ── MIC PULSE ──────────────────────────────────────────── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+/* ── BOTTOM SHEET ENTRY ─────────────────────────────────── */
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+/* ── CARD / MODAL ENTRY ─────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── COUPON SUCCESS CARD ────────────────────────────────── */
+@keyframes csCardPop {
+  from { opacity: 0; transform: scale(0.7) translateY(30px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ── COUPON BIG NUMBER ──────────────────────────────────── */
+@keyframes numBounce {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── ZONE STAR (SVG) ────────────────────────────────────── */
+@keyframes rotateStar {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── ZONE PRICE PULSE ───────────────────────────────────── */
+@keyframes zoomPrice {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.25); }
+}
+
+/* ── WRONG OTP SHAKE ────────────────────────────────────── */
+@keyframes otpShake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-8px); }
+  40%       { transform: translateX(8px); }
+  60%       { transform: translateX(-5px); }
+  80%       { transform: translateX(5px); }
+}
+
+/* ── CELEBRATION EMOJI FLOAT ────────────────────────────── */
+@keyframes floatUp {
+  0%   { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+  60%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-110vh) rotate(var(--rot, 360deg)) scale(0.7); }
+}
+
+/* ── COUPON PARTICLE FLY ────────────────────────────────── */
+@keyframes particleFly {
+  0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+  80%  { opacity: 0.8; }
+  100% { transform: translate(var(--tx, 0px), var(--ty, -60px)) scale(0.1); opacity: 0; }
+}
+
+/* ── COUPON PARTICLE FALL ───────────────────────────────── */
+@keyframes fallDown {
+  0%   { opacity: 1; transform: translateY(0) rotate(0deg); }
+  100% { opacity: 0; transform: translateY(130px) rotate(var(--frot, 180deg)); }
+}
+
+/* ── SPLASH LOGO ENTRANCE ───────────────────────────────── */
+@keyframes splashPulse {
+  0%   { transform: scale(0.85); opacity: 0; }
+  40%  { transform: scale(1.05); opacity: 1; }
+  70%  { transform: scale(0.97); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ── SPLASH LOGO GLOW ───────────────────────────────────── */
+@keyframes splashGlow {
+  0%, 100% { filter: drop-shadow(0 0 0px rgba(107, 191, 123, 0)); }
+  50%       { filter: drop-shadow(0 0 24px rgba(107, 191, 123, 0.7)); }
+}
+
+/* ── RIPPLE EXPAND ──────────────────────────────────────── */
+@keyframes rippleAnim {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* ── SKELETON SHIMMER ───────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   2. ANIMATED ELEMENTS
+   ══════════════════════════════════════════════════════════ */
+
+/* ── ZONE STAR SVG ──────────────────────────────────────── */
+.star-shape {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: rotateStar 4s linear infinite;
+}
+
+/* ── ZONE PRICE SVG ─────────────────────────────────────── */
+.price-text {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: zoomPrice 1.2s ease-in-out infinite;
+}
+
+/* ── SPLASH LOGO ────────────────────────────────────────── */
+/* Dimensions live in auth.css / modals.css — animation here */
+.splash-logo-img {
+  animation:
+    splashPulse 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+    splashGlow  2s  ease-in-out 0.8s infinite;
+}
+
+/* ── VOICE MIC — recording state ────────────────────────── */
+.voice-btn.recording {
+  color: #E8335A;
+  animation: pulse 1s infinite;
+}
+
+/* ── CART BADGE — item added ────────────────────────────── */
+.cart-badge.animate {
+  animation: pop 0.3s ease;
+}
+
+/* ── RIPPLE ──────────────────────────────────────────────── */
+.ripple-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(107, 191, 123, 0.25);
+  transform: scale(0);
+  animation: rippleAnim 0.5s linear;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── SKELETON SHIMMER ───────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--cream2) 25%,
+    #f5f0ea 50%,
+    var(--cream2) 75%
+  );
+  background-size: 400px 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: var(--r-sm);
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   3. CELEBRATION — Confetti canvas, emoji rain, particles
+   ══════════════════════════════════════════════════════════ */
+
+/* ── CONFETTI CANVAS ────────────────────────────────────── */
+#celebration-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: var(--z-overlay);   /* 500 — above content, below modals */
+  display: none;
+}
+
+/* ── EMOJI RAIN CONTAINER ───────────────────────────────── */
+#celebration-emojis {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: calc(var(--z-overlay) - 1);  /* 499 — behind canvas */
+  overflow: hidden;
+  display: none;
+}
+
+/* ── SINGLE FLOATING EMOJI ──────────────────────────────── */
+.cel-emoji {
+  position: absolute;
+  bottom: -80px;
+  font-size: 28px;
+  animation: floatUp var(--dur, 3s) ease-out forwards;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* ── COUPON PARTICLE — circular dot ─────────────────────── */
+.cs-particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: particleFly var(--dur, 1s) ease-out var(--delay, 0s) forwards;
+  will-change: transform, opacity;
+}
+
+/* ── COUPON PARTICLE — emoji fall ───────────────────────── */
+.cs-fall {
+  position: absolute;
+  pointer-events: none;
+  animation: fallDown var(--fdur, 1.2s) ease-in var(--fdelay, 0s) forwards;
+  font-size: var(--fsize, 14px);
+  will-change: transform, opacity;
+}

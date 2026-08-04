@@ -1,0 +1,173 @@
+/* ════════════════════════════════════════
+   css/category-page.css
+   Split-view Category Page Overlay
+════════════════════════════════════════ */
+
+/* ── Full-screen overlay ─────────────── */
+#category-page {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: var(--bg, #f5f5f5);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
+}
+
+#category-page.active {
+  transform: translateX(0);
+}
+
+/* ── Header ──────────────────────────── */
+.cp-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface, #fff);
+  border-bottom: 1px solid var(--border, #e0e0e0);
+  flex-shrink: 0;
+}
+
+.cp-back-btn {
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: var(--text, #222);
+  border-radius: 50%;
+  transition: background 0.15s;
+}
+
+.cp-back-btn:active { background: var(--hover, #f0f0f0); }
+
+.cp-header-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text, #222);
+  flex: 1;
+}
+
+.cp-header-count {
+  font-size: 13px;
+  color: var(--tmut, #888);
+  font-weight: 500;
+}
+
+/* ── Body: left + right ──────────────── */
+.cp-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── LEFT: category tiles ────────────── */
+#cp-cats {
+  width: 90px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--surface, #fff);
+  border-right: 1px solid var(--border, #e0e0e0);
+  padding: 8px 0;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar */
+#cp-cats::-webkit-scrollbar { display: none; }
+#cp-cats { scrollbar-width: none; }
+
+/* ── Category tile button ────────────── */
+.cp-cat-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 10px 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: background 0.15s, border-color 0.15s;
+  position: relative;
+}
+
+.cp-cat-tile:active {
+  background: var(--hover, #f5f5f5);
+}
+
+.cp-cat-tile.active {
+  background: var(--g1-light, #e8f5e9);
+  border-left-color: var(--g2, #4caf50);
+}
+
+.cp-cat-img-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--surface2, #f0f0f0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 5px;
+}
+
+.cp-cat-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cp-cat-emoji {
+  font-size: 24px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cp-cat-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--tmut, #777);
+  text-align: center;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.cp-cat-tile.active .cp-cat-label {
+  color: var(--g2, #4caf50);
+}
+
+/* ── RIGHT: products ─────────────────── */
+#cp-products {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px 8px 80px;
+  background: var(--bg, #f5f5f5);
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── 2-column grid ───────────────────── */
+.cp-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+/* Empty state */
+.cp-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--tmut, #999);
+  font-size: 15px;
+}

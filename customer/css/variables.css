@@ -1,0 +1,62 @@
+/* ============================================================
+   VARIABLES — SabziBuddy
+   Single source of truth for all design tokens
+   ============================================================ */
+:root {
+
+  /* ── GREEN PALETTE ─────────────────────────────────────── */
+  --g1: #0F2318;
+  --g2: #1C3829;
+  --g3: #2D5A3F;
+  --g4: #4A8B5C;
+  --ga: #6BBF7B;
+
+  /* ── HERO / RED PALETTE (Tastio-style top banner) ────────── */
+  --r1: #7A0E1B;
+  --r2: #B3101F;
+  --r3: #E23744;
+  --ra: #FF6B6B;
+
+  /* ── NEUTRAL TONES ─────────────────────────────────────── */
+  --cream:  #F8F4EE;
+  --cream2: #EDE7DC;
+  --terra:  #C8704A;
+
+  /* ── HOME PAGE SURFACE (Swiggy/Zomato-style light grey) ──── */
+  --page-bg: #F7F7F7;
+
+  /* ── TEXT COLORS ───────────────────────────────────────── */
+  --td:   #1A2E22;
+  --tm:   #3D5247;
+  --tmut: #7A9186;
+  --white: #fff;
+
+  /* ── SPECIAL ────────────────────────────────────────────── */
+  --green-price: #329537;
+
+  /* ── SHADOWS ────────────────────────────────────────────── */
+  --shadow-sm: 0 2px 12px rgba(28, 56, 41, 0.08);
+  --shadow-md: 0 8px 32px rgba(28, 56, 41, 0.14);
+  --shadow-lg: 0 20px 60px rgba(28, 56, 41, 0.20);
+
+  /* ── BORDER RADIUS ──────────────────────────────────────── */
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 24px;
+
+  /* ── TRANSITIONS ────────────────────────────────────────── */
+  --ease:     cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --t-fast:   150ms;
+  --t-base:   250ms;
+  --t-slow:   400ms;
+
+  /* ── Z-INDEX SCALE ──────────────────────────────────────── */
+  --z-base:     1;
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-overlay:  500;
+  --z-modal:    600;
+  --z-toast:    900;
+  --z-splash:   9999;
+}

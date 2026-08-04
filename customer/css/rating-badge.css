@@ -1,0 +1,236 @@
+/* ============================================================
+   RATING BADGE — premium animated component (Swiggy/Zomato style)
+   Markup + interaction logic live in js/modules/rating-badge.js.
+   Scoped entirely to .rt-badge — does not touch card layout,
+   only ever used inside the existing .card-rating-col wrapper.
+   ============================================================ */
+
+.rt-badge {
+  /* reset button defaults */
+  appearance: none;
+  border: none;
+  margin: 0;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+
+  background: #0F8A43;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+
+  padding: 4px 4px;
+  border-radius: 999px;
+
+  box-shadow:
+    0 2px 6px rgba(15, 138, 67, 0.35),
+    0 1px 2px rgba(0, 0, 0, 0.12);
+
+  transform: translateZ(0) scale(1);
+  transition: transform 180ms ease-in-out, box-shadow 180ms ease-in-out;
+  will-change: transform;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.rt-badge:hover {
+  transform: translateY(-2px) scale(1);
+  box-shadow:
+    0 6px 14px rgba(15, 138, 67, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.16);
+}
+
+.rt-badge:active {
+  transform: translateY(0) scale(0.96);
+  box-shadow:
+    0 1px 4px rgba(15, 138, 67, 0.3),
+    0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.rt-badge:focus-visible {
+  outline: 2px solid #0F8A43;
+  outline-offset: 3px;
+}
+
+/* ── Rating color tiers — higher rating = darker green ──────
+   3.0–3.9  light   |  4.0–4.5  dark   |  4.6–5.0  darkest    */
+.rt-badge.rt-tier-light {
+  background: #4CAF50;
+  box-shadow:
+    0 2px 6px rgba(76, 175, 80, 0.35),
+    0 1px 2px rgba(0, 0, 0, 0.12);
+}
+.rt-badge.rt-tier-light:hover {
+  box-shadow:
+    0 6px 14px rgba(76, 175, 80, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.16);
+}
+.rt-badge.rt-tier-light:active {
+  box-shadow:
+    0 1px 4px rgba(76, 175, 80, 0.3),
+    0 1px 2px rgba(0, 0, 0, 0.1);
+}
+.rt-badge.rt-tier-light .rt-badge__star { fill: #4CAF50; }
+.rt-badge.rt-tier-light:focus-visible { outline-color: #4CAF50; }
+
+.rt-badge.rt-tier-dark {
+  background: #0F8A43;
+  box-shadow:
+    0 2px 6px rgba(15, 138, 67, 0.35),
+    0 1px 2px rgba(0, 0, 0, 0.12);
+}
+.rt-badge.rt-tier-dark:hover {
+  box-shadow:
+    0 6px 14px rgba(15, 138, 67, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.16);
+}
+.rt-badge.rt-tier-dark:active {
+  box-shadow:
+    0 1px 4px rgba(15, 138, 67, 0.3),
+    0 1px 2px rgba(0, 0, 0, 0.1);
+}
+.rt-badge.rt-tier-dark .rt-badge__star { fill: #0F8A43; }
+.rt-badge.rt-tier-dark:focus-visible { outline-color: #0F8A43; }
+
+.rt-badge.rt-tier-darkest {
+  background: #0B5E30;
+  box-shadow:
+    0 2px 6px rgba(11, 94, 48, 0.4),
+    0 1px 2px rgba(0, 0, 0, 0.14);
+}
+.rt-badge.rt-tier-darkest:hover {
+  box-shadow:
+    0 6px 14px rgba(11, 94, 48, 0.45),
+    0 2px 4px rgba(0, 0, 0, 0.18);
+}
+.rt-badge.rt-tier-darkest:active {
+  box-shadow:
+    0 1px 4px rgba(11, 94, 48, 0.35),
+    0 1px 2px rgba(0, 0, 0, 0.12);
+}
+.rt-badge.rt-tier-darkest .rt-badge__star { fill: #0B5E30; }
+.rt-badge.rt-tier-darkest:focus-visible { outline-color: #0B5E30; }
+
+/* ── Inner track: holds circle + value, order flips per click ── */
+.rt-badge__track {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rt-badge__circle,
+.rt-badge__value {
+  order: 1;
+}
+.rt-badge__value {
+  order: 2;
+}
+
+/* data-rt-state reflects the *logical* side the circle belongs on.
+   Flipping `order` repositions instantly; the actual "sliding" look
+   comes from the Web Animations API translate/rotate/scale applied
+   by rating-badge.js right after the flip (FLIP technique), so no
+   width/height/layout property is ever animated directly. */
+.rt-badge[data-rt-state="right"] .rt-badge__circle { order: 2; }
+.rt-badge[data-rt-state="right"] .rt-badge__value  { order: 1; }
+
+/* ── White circle housing the star ─────────────────────────── */
+.rt-badge__circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+
+  will-change: transform;
+}
+
+.rt-badge__value {
+  will-change: transform;
+  padding: 0 1px;
+}
+
+.rt-badge__star {
+  width: 14px;
+  height: 14px;
+  fill: #0F8A43;
+}
+
+/* ── Responsive: keep proportions intact down to 320px ─────── */
+@media (max-width: 375px) {
+  .rt-badge {
+    font-size: 12px;
+    padding: 3px 3px;
+  }
+  .rt-badge__track {
+    gap: 5px;
+  }
+  .rt-badge__circle {
+    width: 12px;
+    height: 12px;
+  }
+  .rt-badge__star {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+/* ── "By X+" <-> "For you" sub-label crossfade ───────────────
+   Both strings share one slot so the swap never shifts layout;
+   only opacity + a tiny translateY are animated (transform/opacity
+   only — no layout properties), toggled by rating-badge.js when
+   the badge's circle flips sides. */
+.card-rating-sub {
+  position: relative;
+  width: 40px;
+  height: 14px;
+  overflow: hidden;
+}
+
+.rt-sub__by,
+.rt-sub__foryou {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  white-space: nowrap;
+  transition: opacity 220ms ease-in-out, transform 220ms ease-in-out;
+  will-change: opacity, transform;
+}
+
+.rt-sub__foryou {
+  opacity: 0;
+  transform: translateY(4px);
+  pointer-events: none;
+  color: #7a9186;
+  font-weight: 600;
+}
+
+.card-rating-sub[data-rt-sub="foryou"] .rt-sub__by {
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+}
+.card-rating-sub[data-rt-sub="foryou"] .rt-sub__foryou {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rt-sub__by,
+  .rt-sub__foryou {
+    transition: none !important;
+  }
+}
